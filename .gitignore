@@ -1,0 +1,5 @@
+*.pyc
+__pycache__/
+LAB_1/*.pyc
+LAB_1/__pycache__/
+LAB_1/__pycache__/*.pyc
