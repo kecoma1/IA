@@ -158,6 +158,7 @@ def breadthFirstSearch(problem):
 
     # Initialize the search-tree with the root-node
     currentNode = problem.getStartState()
+    stateType = type(currentNode)
     searchTree = []
     searchTree.append({'node': currentNode, 'childs': [], 'parent': None})
 
@@ -181,11 +182,11 @@ def breadthFirstSearch(problem):
             for child in node['childs']:
                 if child[0] == currentNode[0]:
                     # Adding just tupples
-                    parent = node['node'] if not isinstance(node['node'][0], tuple) else node['node'][0]
+                    parent = node['node'][0] if stateType == type(node['node'][0]) else node['node']
                     break
 
         # Checking if the node is in the tree
-        if isinstance(currentNode[0], tuple) and not any(node['node'] == currentNode for node in searchTree):
+        if (stateType == type(currentNode) or stateType == type(currentNode[0])) and not any(node['node'] == currentNode for node in searchTree):
             searchTree.append({'node': currentNode, 'childs': [], 'parent': None})
             searchTree[-1]['parent'] = parent
 
@@ -199,17 +200,17 @@ def breadthFirstSearch(problem):
             while parent != None:
                 # We traverse the node in reverse order, from the end to the beginning
                 for node in searchTree[::-1]:
-                    if node['node'][0] == parent:
+                    state = node['node'][0] if type(node['node'][0]) else node['node']
+                    if state == parent and node['parent'] != None:
                         parent = node['parent']
                         route.append(node['node'][1])
                     elif problem.getStartState() == parent:
                         return route[::-1]
-
         else:
             # Iterating through the successors and adding them. Excluding the nodes that have been visited
             # Checking if the element is a tuple to avoid exceptions
-            for child in problem.getSuccessors(currentNode[0]) if isinstance(currentNode[0], tuple) else problem.getSuccessors(
-                currentNode):
+            position = currentNode[0] if stateType == type(currentNode[0]) else currentNode
+            for child in problem.getSuccessors(position):
                 # Checking if the childs are already in the tree
                 if not any(node['node'][0] == child[0] for node in searchTree):
                     openedList.push(child)
@@ -223,6 +224,7 @@ def uniformCostSearch(problem):
 
     # Initialize the search-tree with the root-node
     currentNode = problem.getStartState()
+    stateType = type(currentNode)
     searchTree = []
     searchTree.append({'node': currentNode, 'childs': [], 'parent': None})
 
@@ -246,11 +248,11 @@ def uniformCostSearch(problem):
             for child in node['childs']:
                 if child[0] == currentNode[0]:
                     # Adding just tupples
-                    parent = node['node'] if not isinstance(node['node'][0], tuple) else node['node'][0]
+                    parent = node['node'][0] if stateType == type(node['node'][0]) else node['node']
                     break
 
         # Checking if the node is in the tree
-        if isinstance(currentNode[0], tuple) and not any(node['node'] == currentNode for node in searchTree):
+        if (stateType == type(currentNode) or stateType == type(currentNode[0])) and not any(node['node'] == currentNode for node in searchTree):
             searchTree.append({'node': currentNode, 'childs': [], 'parent': None})
             searchTree[-1]['parent'] = parent
 
@@ -264,7 +266,8 @@ def uniformCostSearch(problem):
             while parent != None:
                 # We traverse the node in reverse order, from the end to the beginning
                 for node in searchTree[::-1]:
-                    if node['node'][0] == parent:
+                    state = node['node'][0] if type(node['node'][0]) else node['node']
+                    if state == parent and node['parent'] != None:
                         parent = node['parent']
                         route.append(node['node'][1])
                     elif problem.getStartState() == parent:
@@ -273,8 +276,8 @@ def uniformCostSearch(problem):
         else:
             # Iterating through the successors and adding them. Excluding the nodes that have been visited
             # Checking if the element is a tuple to avoid exceptions
-            for child in problem.getSuccessors(currentNode[0]) if isinstance(currentNode[0], tuple) else problem.getSuccessors(
-                currentNode):
+            position = currentNode[0] if stateType == type(currentNode[0]) else currentNode
+            for child in problem.getSuccessors(position):
                 # Checking if the childs are already in the tree
                 if not any(node['node'][0] == child[0] for node in searchTree):
                     openedList.push(child, child[2])
