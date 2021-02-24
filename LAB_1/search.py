@@ -212,6 +212,8 @@ def breadthFirstSearch(problem):
                 # Checking if the childs are already in the tree
                 a = False
                 if not any(node['node'][0] == child[0] for node in searchTree):
+                    # We search in the whole tree if one of the childs contains the 'child' node
+                    # That we want to add
                     for node in searchTree:
                         for hijo in node['childs']:
                             if child[0] == hijo[0]:
