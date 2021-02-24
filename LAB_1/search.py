@@ -129,8 +129,7 @@ class SearchTree:
         """
         if self.isRoot(node):
             return True
-
-        return any(node['node'] == node for node in self.tree)
+        return any(ele['node'][0] == node[0] for ele in self.tree) 
 
 
     def isInTree(self, node):
@@ -313,7 +312,7 @@ def depthFirstSearch(problem):
         if not search_tree.isInClosedList(currentNode):
             search_tree.add(currentNode)
             search_tree.setParent(currentNode) 
-            search_tree.setRoute(currentNode)        
+            search_tree.setRoute(currentNode)      
 
         # Checking if this is the goal
         if problem.isGoalState(currentNode[0]  if type(currentNode[0]) == state_type else currentNode):
@@ -322,7 +321,7 @@ def depthFirstSearch(problem):
             # Iterating through the successors and adding them. Excluding the nodes that have been visited
             for child in problem.getSuccessors(currentNode[0] if state_type == type(currentNode[0]) else currentNode):
                 # Checking if the childs are already in the tree
-                if not search_tree.isInTree(child):
+                if not search_tree.isInClosedList(child):
                     search_tree.addChild(currentNode, child)
                     openedList.push(child)
 
