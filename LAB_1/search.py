@@ -112,9 +112,7 @@ def depthFirstSearch(problem):
 
         # Looking for the parent of the current node
         parent = None
-        for node in searchTree:
-            if parent != None:
-                break
+        for node in searchTree:        
             for child in node['childs']:
                 if child[0] == currentNode[0]:
                     # Adding just tupples
@@ -122,12 +120,12 @@ def depthFirstSearch(problem):
                     break
 
         # Checking if the node is in the tree
-        if (stateType == type(currentNode) or stateType == type(currentNode[0])) and not any(node['node'] == currentNode for node in searchTree):
+        if not any(node['node'] == currentNode for node in searchTree):
             searchTree.append({'node': currentNode, 'childs': [], 'parent': None})
             searchTree[-1]['parent'] = parent
 
         # Checking if this is the goal
-        if problem.isGoalState(currentNode[0]):
+        if problem.isGoalState(currentNode[0]  if type(currentNode[0]) == stateType else currentNode):
             # Creating the route, we start from the end and we check the father of every node
             parent = searchTree[-1]['parent']
             route.append(searchTree[-1]['node'][1])
@@ -136,12 +134,13 @@ def depthFirstSearch(problem):
             while parent != None:
                 # We traverse the node in reverse order, from the end to the beginning
                 for node in searchTree[::-1]:
-                    state = node['node'][0] if type(node['node'][0]) else node['node']
+                    state = node['node'][0] if type(node['node'][0]) == stateType else node['node']
                     if state == parent and node['parent'] != None:
                         parent = node['parent']
                         route.append(node['node'][1])
                     elif problem.getStartState() == parent:
                         return route[::-1]
+                return None
         else:
             # Iterating through the successors and adding them. Excluding the nodes that have been visited
             # Checking if the element is a tuple to avoid exceptions
@@ -149,20 +148,18 @@ def depthFirstSearch(problem):
             for child in problem.getSuccessors(position):
                 # Checking if the childs are already in the tree
                 if not any(node['node'][0] == child[0] for node in searchTree):
-                    openedList.push(child)
                     searchTree[-1]['childs'].append(child)
+                if not any(node['node'][0]  == child[0] for node in searchTree):
+                    openedList.push(child)
 
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    # Route to reach the goal state
-    route = []
-
     # Initialize the search-tree with the root-node
     currentNode = problem.getStartState()
     stateType = type(currentNode)
     searchTree = []
-    searchTree.append({'node': currentNode, 'childs': [], 'parent': None})
+    searchTree.append({'node': currentNode, 'childs': [], 'parent': None, 'route': []})
 
     # Initialize the opened-list with root-node
     openedList = util.Queue()
@@ -177,12 +174,12 @@ def breadthFirstSearch(problem):
         # Getting the node from the queue
         # to expand it and adding it to the search tree
         currentNode = openedList.pop()
+        while any(node['node'][0] == currentNode[0] for node in searchTree) and openedList.isEmpty() == False:
+            currentNode = openedList.pop()
 
         # Looking for the parent of the current node
         parent = None
         for node in searchTree:
-            if parent != None:
-                break
             for child in node['childs']:
                 if child[0] == currentNode[0]:
                     # Adding just tupples
@@ -190,12 +187,21 @@ def breadthFirstSearch(problem):
                     break
 
         # Checking if the node is in the tree
-        if (stateType == type(currentNode) or stateType == type(currentNode[0])) and not any(node['node'] == currentNode for node in searchTree):
-            searchTree.append({'node': currentNode, 'childs': [], 'parent': None})
+        if not any(node['node'] == currentNode for node in searchTree):
+            if currentNode != problem.getStartState():
+                for node in searchTree:
+                    if node['node'][0] == parent:
+                        route = node['route']
+                        route.append(currentNode[1])
+                        break
+            else:
+                route.append(currentNode)
+            searchTree.append({'node': currentNode, 'childs': [], 'parent': None, 'route': route})
             searchTree[-1]['parent'] = parent
 
+
         # Checking if this is the goal
-        if problem.isGoalState(currentNode[0]):
+        if problem.isGoalState(currentNode[0] if type(currentNode[0]) == stateType else currentNode):
             # Creating the route, we start from the end and we check the father of every node
             parent = searchTree[-1]['parent']
             route.append(searchTree[-1]['node'][1])
@@ -204,12 +210,13 @@ def breadthFirstSearch(problem):
             while parent != None:
                 # We traverse the node in reverse order, from the end to the beginning
                 for node in searchTree[::-1]:
-                    state = node['node'][0] if type(node['node'][0]) else node['node']
+                    state = node['node'][0] if type(node['node'][0]) == stateType else node['node']
                     if state == parent and node['parent'] != None:
                         parent = node['parent']
                         route.append(node['node'][1])
                     elif problem.getStartState() == parent:
                         return route[::-1]
+                return None
         else:
             # Iterating through the successors and adding them. Excluding the nodes that have been visited
             # Checking if the element is a tuple to avoid exceptions
@@ -217,8 +224,8 @@ def breadthFirstSearch(problem):
             for child in problem.getSuccessors(position):
                 # Checking if the childs are already in the tree
                 if not any(node['node'][0] == child[0] for node in searchTree):
-                    openedList.push(child)
                     searchTree[-1]['childs'].append(child)
+                    openedList.push(child)
 
 
 def uniformCostSearch(problem):
@@ -249,8 +256,6 @@ def uniformCostSearch(problem):
         # Looking for the parent of the current node
         parent = None
         for node in searchTree:
-            if parent != None:
-                break
             for child in node['childs']:
                 if child[0] == currentNode[0]:
                     # Adding just tupples
@@ -263,7 +268,7 @@ def uniformCostSearch(problem):
             searchTree[-1]['parent'] = parent
 
         # Checking if this is the goal
-        if problem.isGoalState(currentNode[0]):
+        if problem.isGoalState(currentNode[0] if type(currentNode[0]) == stateType else currentNode):
             # Creating the route, we start from the end and we check the father of every node
             parent = searchTree[-1]['parent']
             route.append(searchTree[-1]['node'][1])
@@ -272,12 +277,13 @@ def uniformCostSearch(problem):
             while parent != None:
                 # We traverse the node in reverse order, from the end to the beginning
                 for node in searchTree[::-1]:
-                    state = node['node'][0] if type(node['node'][0]) else node['node']
+                    state = node['node'][0] if type(node['node'][0]) == stateType else node['node']
                     if state == parent and node['parent'] != None:
                         parent = node['parent']
                         route.append(node['node'][1])
                     elif problem.getStartState() == parent:
                         return route[::-1]
+                return None
 
         else:
             # Iterating through the successors and adding them. Excluding the nodes that have been visited

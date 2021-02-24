@@ -8,7 +8,7 @@
             "name": "Python: Archivo actual",
             "type": "python",
             "request": "launch",
-            //"args": ["-l", "tinyMaze", "-z", ".5", "-p", "SearchAgent"],
+            //"args": ["-l", "tinyMaze", "-p", "SearchAgent", "-a", "fn=bfs"],
             //"program": "pacman.py",
             "program": "autograder.py",
             "console": "integratedTerminal"
