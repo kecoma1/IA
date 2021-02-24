@@ -113,6 +113,8 @@ def depthFirstSearch(problem):
         # Looking for the parent of the current node
         parent = None
         for node in searchTree:
+            if parent != None:
+                break
             for child in node['childs']:
                 if child[0] == currentNode[0]:
                     # Adding just tupples
@@ -179,6 +181,8 @@ def breadthFirstSearch(problem):
         # Looking for the parent of the current node
         parent = None
         for node in searchTree:
+            if parent != None:
+                break
             for child in node['childs']:
                 if child[0] == currentNode[0]:
                     # Adding just tupples
@@ -245,6 +249,8 @@ def uniformCostSearch(problem):
         # Looking for the parent of the current node
         parent = None
         for node in searchTree:
+            if parent != None:
+                break
             for child in node['childs']:
                 if child[0] == currentNode[0]:
                     # Adding just tupples
