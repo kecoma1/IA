@@ -190,8 +190,9 @@ def breadthFirstSearch(problem):
         if not any(node['node'] == currentNode for node in searchTree):
             if currentNode != problem.getStartState():
                 for node in searchTree:
-                    if node['node'][0] == parent:
-                        route = node['route']
+                    state = node['node'][0] if type(node['node'][0]) == stateType else node['node'] 
+                    if state == parent:
+                        route = node['route'].copy()
                         route.append(currentNode[1])
                         break
             else:
@@ -202,30 +203,24 @@ def breadthFirstSearch(problem):
 
         # Checking if this is the goal
         if problem.isGoalState(currentNode[0] if type(currentNode[0]) == stateType else currentNode):
-            # Creating the route, we start from the end and we check the father of every node
-            parent = searchTree[-1]['parent']
-            route.append(searchTree[-1]['node'][1])
-
-            # looking for the parent
-            while parent != None:
-                # We traverse the node in reverse order, from the end to the beginning
-                for node in searchTree[::-1]:
-                    state = node['node'][0] if type(node['node'][0]) == stateType else node['node']
-                    if state == parent and node['parent'] != None:
-                        parent = node['parent']
-                        route.append(node['node'][1])
-                    elif problem.getStartState() == parent:
-                        return route[::-1]
-                return None
+            return searchTree[-1]['route']
         else:
             # Iterating through the successors and adding them. Excluding the nodes that have been visited
             # Checking if the element is a tuple to avoid exceptions
             position = currentNode[0] if stateType == type(currentNode[0]) else currentNode
             for child in problem.getSuccessors(position):
                 # Checking if the childs are already in the tree
+                a = False
                 if not any(node['node'][0] == child[0] for node in searchTree):
-                    searchTree[-1]['childs'].append(child)
-                    openedList.push(child)
+                    for node in searchTree:
+                        for hijo in node['childs']:
+                            if child[0] == hijo[0]:
+                                a = True
+                                break
+                        if a == True: break
+                    if a == False:
+                        openedList.push(child)
+                        searchTree[-1]['childs'].append(child)
 
 
 def uniformCostSearch(problem):
@@ -291,9 +286,15 @@ def uniformCostSearch(problem):
             position = currentNode[0] if stateType == type(currentNode[0]) else currentNode
             for child in problem.getSuccessors(position):
                 # Checking if the childs are already in the tree
+                a = False
                 if not any(node['node'][0] == child[0] for node in searchTree):
-                    openedList.push(child, child[2])
-                    searchTree[-1]['childs'].append(child)
+                    for node in searchTree:
+                        for hijo in node['childs']:
+                            if child == hijo:
+                                a = True
+                    if a == True:
+                        openedList.push(child, child[2])
+                        searchTree[-1]['childs'].append(child)
 
 
 def nullHeuristic(state, problem=None):
