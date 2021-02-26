@@ -38,7 +38,7 @@ class SearchTree:
         Args:
             root (state): Root node of the tree
         """
-        self.tree = [{'node': root, 'childs': [], 'parent': None, 'route': None}]
+        self.tree = [{'node': root, 'childs': [], 'parent': None, 'route': None, 'cost': 0}]
 
 
     def add(self, node):
@@ -47,7 +47,9 @@ class SearchTree:
         Args:
             node (tuple): Node to be added
         """
-        self.tree.append({'node': node, 'childs': [], 'parent': None, 'route': []})
+        if self.isRoot(node):
+            return 
+        self.tree.append({'node': node, 'childs': [], 'parent': None, 'route': [], 'cost': 0})
 
 
     def setParent(self, node):
@@ -221,6 +223,44 @@ class SearchTree:
         ele = self.getTreeNode(node)
         return ele['route']
 
+    def getNodeCost(self, node):
+        """Method to get the node's cost
+
+        Args:
+            node ([tuple): Node
+
+        Returns:
+            int: Node's cost
+        """
+        ele = self.getTreeNode(node)
+        return ele['cost']
+    
+    def setCost(self, node):
+        """Method to set the cost in a node
+
+        Args:
+            node (tuple): Node
+        """
+        if self.isRoot(node):
+            return
+        parent_cost = self.getParentCost(node)  
+        ele = self.getTreeNode(node)
+        ele['cost'] = parent_cost + node[2]
+
+
+    def getParentCost(self, node):
+        """Method to get the parents cost of a node
+
+        Returns:
+            int: Cost of the parent
+        """
+        if self.isRoot(node):
+            return 0
+        parent = self.getParentOf(node)
+        ele = self.getTreeNode(parent)
+        return ele['cost']
+
+        
 
 class SearchProblem:
     """
@@ -274,6 +314,59 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return [s, s, w, s, w, w, s, w]
 
+def solveSimpleSearch(problem, utils):
+    """This method solves simple uninformed search algorithms which
+        reuse same code. These algorithms are DFS, BFS and UCS
+        
+    Args:
+        problem: problem to solve
+        utils: name of the data structure of util.py which will be used
+    """
+    start_state = problem.getStartState()
+
+    # Initialize the search-tree with the root-node
+    search_tree = SearchTree(start_state) 
+
+    # Initialize the opened-list with root-node
+    openedList = utils
+    if type(openedList) == util.Stack or type(openedList) == util.Queue:
+        openedList.push(start_state)
+    else:
+        openedList.push(start_state, 0)
+
+
+    # Iterating
+    while 1:
+        # If the open list is empty error 
+        if openedList.isEmpty():
+            return None
+
+        # Getting the node from the stack to expand it and adding it to the search tree
+        currentNode = openedList.pop()
+        if search_tree.isInClosedList(currentNode) and not search_tree.isRoot(currentNode):
+            continue
+
+        # Checking if the node is in the closed-list, if it is we dont add it
+        if not search_tree.isInClosedList(currentNode):
+            search_tree.add(currentNode)
+            search_tree.setParent(currentNode) 
+            search_tree.setRoute(currentNode) 
+            search_tree.setCost(currentNode)     
+
+        # Checking if this is the goal
+        if problem.isGoalState(currentNode if search_tree.isRoot(currentNode) else currentNode[0]):
+            return search_tree.getNodeRoute(currentNode)
+        else:
+            # Iterating through the successors and adding them. Excluding the nodes that have been visited
+            for child in problem.getSuccessors(currentNode if search_tree.isRoot(currentNode) else currentNode[0]):
+                # Checking if the childs are already in the tree
+                if not search_tree.isInClosedList(child):
+                    search_tree.addChild(currentNode, child)
+                    if type(openedList) == util.Stack or type(openedList) == util.Queue:
+                        openedList.push(child)
+                    else:
+                        openedList.push(child, search_tree.getNodeCost(currentNode)+child[2])      
+
 
 def depthFirstSearch(problem):
     """
@@ -289,187 +382,17 @@ def depthFirstSearch(problem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    start_state = problem.getStartState()
-    state_type = type(start_state)
-
-    # Initialize the search-tree with the root-node
-    search_tree = SearchTree(start_state) 
-
-    # Initialize the opened-list with root-node
-    openedList = util.Stack()
-    openedList.push(start_state)
-
-    # Iterating
-    while 1:
-        # If the open list is empty error 
-        if openedList.isEmpty():
-            return None
-
-        # Getting the node from the stack to expand it and adding it to the search tree
-        currentNode = openedList.pop()
-
-        # Checking if the node is in the closed-list, if it is we dont add it
-        if not search_tree.isInClosedList(currentNode):
-            search_tree.add(currentNode)
-            search_tree.setParent(currentNode) 
-            search_tree.setRoute(currentNode)      
-
-        # Checking if this is the goal
-        if problem.isGoalState(currentNode[0]  if type(currentNode[0]) == state_type else currentNode):
-            return search_tree.getNodeRoute(currentNode)
-        else:
-            # Iterating through the successors and adding them. Excluding the nodes that have been visited
-            for child in problem.getSuccessors(currentNode[0] if state_type == type(currentNode[0]) else currentNode):
-                # Checking if the childs are already in the tree
-                if not search_tree.isInClosedList(child):
-                    search_tree.addChild(currentNode, child)
-                    openedList.push(child)
+    return solveSimpleSearch(problem, util.Stack())
 
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    # Initialize the search-tree with the root-node
-    currentNode = problem.getStartState()
-    stateType = type(currentNode)
-    searchTree = []
-    searchTree.append({'node': currentNode, 'childs': [], 'parent': None, 'route': []})
-
-    # Initialize the opened-list with root-node
-    openedList = util.Queue()
-    openedList.push(currentNode)
-
-    # Iterating
-    while 1:
-        # If the open list is empty error
-        if openedList.isEmpty():
-            return None
-
-        # Getting the node from the queue
-        # to expand it and adding it to the search tree
-        currentNode = openedList.pop()
-        while any(node['node'][0] == currentNode[0] for node in searchTree) and openedList.isEmpty() == False:
-            currentNode = openedList.pop()
-
-        # Looking for the parent of the current node
-        parent = None
-        for node in searchTree:
-            for child in node['childs']:
-                if child[0] == currentNode[0]:
-                    # Adding just tupples
-                    parent = node['node'][0] if stateType == type(node['node'][0]) else node['node']
-                    break
-
-        # Checking if the node is in the tree
-        if not any(node['node'] == currentNode for node in searchTree):
-            if currentNode != problem.getStartState():
-                for node in searchTree:
-                    state = node['node'][0] if type(node['node'][0]) == stateType else node['node'] 
-                    if state == parent:
-                        route = node['route'].copy()
-                        route.append(currentNode[1])
-                        break
-            else:
-                route.append(currentNode)
-            searchTree.append({'node': currentNode, 'childs': [], 'parent': None, 'route': route})
-            searchTree[-1]['parent'] = parent
-
-
-        # Checking if this is the goal
-        if problem.isGoalState(currentNode[0] if type(currentNode[0]) == stateType else currentNode):
-            return searchTree[-1]['route']
-        else:
-            # Iterating through the successors and adding them. Excluding the nodes that have been visited
-            # Checking if the element is a tuple to avoid exceptions
-            position = currentNode[0] if stateType == type(currentNode[0]) else currentNode
-            for child in problem.getSuccessors(position):
-                # Checking if the childs are already in the tree
-                a = False
-                if not any(node['node'][0] == child[0] for node in searchTree):
-                    # We search in the whole tree if one of the childs contains the 'child' node
-                    # That we want to add
-                    for node in searchTree:
-                        for hijo in node['childs']:
-                            if child[0] == hijo[0]:
-                                a = True
-                                break
-                        if a == True: break
-                    if a == False:
-                        openedList.push(child)
-                        searchTree[-1]['childs'].append(child)
+    return solveSimpleSearch(problem, util.Queue())
 
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    # Route to reach the goal state
-    route = []
-
-    # Initialize the search-tree with the root-node
-    currentNode = problem.getStartState()
-    stateType = type(currentNode)
-    searchTree = []
-    searchTree.append({'node': currentNode, 'childs': [], 'parent': None})
-
-    # Initialize the opened-list with root-node
-    openedList = util.PriorityQueue()
-    openedList.push(currentNode, 1)
-
-    # Iterating
-    while 1:
-        # If the open list is empty error
-        if openedList.isEmpty():
-            return None
-
-        # Getting the node from the queue
-        # to expand it and adding it to the search tree
-        currentNode = openedList.pop()
-
-        # Looking for the parent of the current node
-        parent = None
-        for node in searchTree:
-            for child in node['childs']:
-                if child[0] == currentNode[0]:
-                    # Adding just tupples
-                    parent = node['node'][0] if stateType == type(node['node'][0]) else node['node']
-                    break
-
-        # Checking if the node is in the tree
-        if (stateType == type(currentNode) or stateType == type(currentNode[0])) and not any(node['node'] == currentNode for node in searchTree):
-            searchTree.append({'node': currentNode, 'childs': [], 'parent': None})
-            searchTree[-1]['parent'] = parent
-
-        # Checking if this is the goal
-        if problem.isGoalState(currentNode[0] if type(currentNode[0]) == stateType else currentNode):
-            # Creating the route, we start from the end and we check the father of every node
-            parent = searchTree[-1]['parent']
-            route.append(searchTree[-1]['node'][1])
-
-            # looking for the parent
-            while parent != None:
-                # We traverse the node in reverse order, from the end to the beginning
-                for node in searchTree[::-1]:
-                    state = node['node'][0] if type(node['node'][0]) == stateType else node['node']
-                    if state == parent and node['parent'] != None:
-                        parent = node['parent']
-                        route.append(node['node'][1])
-                    elif problem.getStartState() == parent:
-                        return route[::-1]
-                return None
-
-        else:
-            # Iterating through the successors and adding them. Excluding the nodes that have been visited
-            # Checking if the element is a tuple to avoid exceptions
-            position = currentNode[0] if stateType == type(currentNode[0]) else currentNode
-            for child in problem.getSuccessors(position):
-                # Checking if the childs are already in the tree
-                a = False
-                if not any(node['node'][0] == child[0] for node in searchTree):
-                    for node in searchTree:
-                        for hijo in node['childs']:
-                            if child == hijo:
-                                a = True
-                    if a == True:
-                        openedList.push(child, child[2])
-                        searchTree[-1]['childs'].append(child)
+    return solveSimpleSearch(problem, util.PriorityQueue())
 
 
 def nullHeuristic(state, problem=None):
