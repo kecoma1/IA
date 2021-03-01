@@ -16,7 +16,6 @@
 In search.py, you will implement generic search algorithms which are called by
 Pacman agents (in searchAgents.py).
 """
-
 import util
 from game import Directions
 
@@ -260,7 +259,6 @@ class SearchTree:
         ele = self.getTreeNode(parent)
         return ele['cost']
 
-        
 
 class SearchProblem:
     """
@@ -314,7 +312,8 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return [s, s, w, s, w, w, s, w]
 
-def solveSimpleSearch(problem, utils):
+
+def solveSimpleSearch(problem, utils, heuristic):
     """This method solves simple uninformed search algorithms which
         reuse same code. These algorithms are DFS, BFS and UCS
         
@@ -331,9 +330,10 @@ def solveSimpleSearch(problem, utils):
     openedList = utils
     if type(openedList) == util.Stack or type(openedList) == util.Queue:
         openedList.push(start_state)
+    elif heuristic != None:
+        openedList.push(start_state, heuristic(start_state, problem))
     else:
         openedList.push(start_state, 0)
-
 
     # Iterating
     while 1:
@@ -364,6 +364,8 @@ def solveSimpleSearch(problem, utils):
                     search_tree.addChild(currentNode, child)
                     if type(openedList) == util.Stack or type(openedList) == util.Queue:
                         openedList.push(child)
+                    elif heuristic != None:
+                        openedList.push(child, search_tree.getNodeCost(currentNode)+child[2]+heuristic(child[0], problem))
                     else:
                         openedList.push(child, search_tree.getNodeCost(currentNode)+child[2])      
 
@@ -382,17 +384,17 @@ def depthFirstSearch(problem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    return solveSimpleSearch(problem, util.Stack())
+    return solveSimpleSearch(problem, util.Stack(), None)
 
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    return solveSimpleSearch(problem, util.Queue())
+    return solveSimpleSearch(problem, util.Queue(), None)
 
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    return solveSimpleSearch(problem, util.PriorityQueue())
+    return solveSimpleSearch(problem, util.PriorityQueue(), None)
 
 
 def nullHeuristic(state, problem=None):
@@ -406,7 +408,7 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    return solveSimpleSearch(problem, util.PriorityQueue(), heuristic)
 
 # Abbreviations
 bfs = breadthFirstSearch
