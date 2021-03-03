@@ -130,7 +130,18 @@ class SearchTree:
         """
         if self.isRoot(node):
             return True
-        return any(ele['node'][0] == node[0] for ele in self.tree) 
+        return any(ele['node'][0] == node[0] for ele in self.tree)
+
+
+    def isInClosedListState(self, state):
+        """Method to get if a state is in the closed list
+
+        Args:
+            state (tuple): State to check if it is in the closed list
+        """
+        if self.isRoot(state):
+            return True
+        return any(ele['node'] == state for ele in self.tree) 
 
 
     def isInTree(self, node):
@@ -190,6 +201,21 @@ class SearchTree:
         parent = self.getParentOf(node)
         ele = self.getTreeNode(parent)
         return ele['route']
+
+
+    def addRoute(self, node, route):
+        """Method to add a route to node
+
+        Args:
+            node (tuple): Node to modify
+            route (direction): Direction to add
+        """
+        if self.isRoot(node):
+            return
+        ele = self.getTreeNode(node)
+        if ele['route'] == None:
+            ele['route'] = []
+        ele['route'].append(route)
 
     
     def setRoute(self, node):
@@ -359,7 +385,7 @@ def solveSimpleSearch(problem, utils, heuristic):
         else:
             # Iterating through the successors and adding them. Excluding the nodes that have been visited
             for child in problem.getSuccessors(currentNode if search_tree.isRoot(currentNode) else currentNode[0]):
-                # Checking if the childs are already in the tree
+                # Checking if the childs are already in the closed list
                 if not search_tree.isInClosedList(child):
                     search_tree.addChild(currentNode, child)
                     if type(openedList) == util.Stack or type(openedList) == util.Queue:

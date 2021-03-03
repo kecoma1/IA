@@ -285,24 +285,34 @@ class CornersProblem(search.SearchProblem):
             if not startingGameState.hasFood(*corner):
                 print('Warning: no food in corner ' + str(corner))
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
-        # Please add any code here which you would like to use
-        # in initializing the problem
-        "*** YOUR CODE HERE ***"
+        self.visited = 4 # Variable to check if all the corners have been visited
+        
+        # Adding the main structure to know the route
+        self.searchTree = search.SearchTree(self.startingPosition)
+
 
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.startingPosition
+
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # Checking if the current state is one of the corners
+        if state in self.corners:
+            self.visited -= 1
+
+        # If all corners are visited we return True    
+        if self.visited > 0:
+            return False
+        else:
+            return True
+        
 
     def getSuccessors(self, state):
         """
@@ -314,20 +324,39 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
-
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
-            # Here's a code snippet for figuring out whether a new position hits a wall:
-            #   x,y = currentPosition
-            #   dx, dy = Actions.directionToVector(action)
-            #   nextx, nexty = int(x + dx), int(y + dy)
-            #   hitsWall = self.walls[nextx][nexty]
+            x,y = state 
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            if not self.walls[nextx][nexty]:
+                # Adding the actions to a list
+                actions = self.searchTree.getNodeRoute(state)
+                if actions == None:
+                    actions = []
+                actions_copy = actions.copy()
 
-            "*** YOUR CODE HERE ***"
+                # Adding the action to the list of actions
+                actions_copy.append(action)
 
+                # Adding the childs of the current node in the search tree
+                self.searchTree.addChild(state, (nextx, nexty))
+                successors.append( ((nextx, nexty), action, self.getCostOfActions(actions_copy)) )
+
+                # We add the current state to the searchTree structure
+                if not self.searchTree.isInClosedList(state):
+                    self.searchTree.add(state)
+                    self.searchTree.setParent(state)
+
+                # Adding the child as node in the tree
+                if not self.searchTree.isInClosedListState((nextx, nexty)):
+                    self.searchTree.add(((nextx, nexty), action))
+                    self.searchTree.addRoute((nextx, nexty), actions_copy)
+                    
         self._expanded += 1 # DO NOT CHANGE
         return successors
+
 
     def getCostOfActions(self, actions):
         """
