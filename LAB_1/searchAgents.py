@@ -287,8 +287,6 @@ class CornersProblem(search.SearchProblem):
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
         self.visited = 4 # Variable to check if all the corners have been visited
         
-        # Adding the main structure to know the route
-        self.searchTree = search.SearchTree(self.startingPosition)
 
 
     def getStartState(self):
@@ -331,32 +329,7 @@ class CornersProblem(search.SearchProblem):
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             if not self.walls[nextx][nexty]:
-                # Adding the actions to a list
-                actions = self.searchTree.getNodeRoute(state)
-                if actions == None:
-                    actions = []
-                actions_copy = actions.copy()
-
-                # Adding the action to the list of actions
-                actions_copy.append(action)
-
-                # Adding the childs of the current node in the search tree
-                self.searchTree.addChild(state, (nextx, nexty))
-                successors.append( ((nextx, nexty), action, self.getCostOfActions(actions_copy)) )
-
-                # We add the current state to the searchTree structure
-                if not self.searchTree.isInClosedList(state):
-                    self.searchTree.add(state)
-                    self.searchTree.setParent(state)
-
-                # Adding the child as node in the tree
-                if not self.searchTree.isInClosedListState((nextx, nexty)):
-                    self.searchTree.add(((nextx, nexty), action))
-                    self.searchTree.addRoute((nextx, nexty), actions_copy)
-                    
-        self._expanded += 1 # DO NOT CHANGE
-        return successors
-
+                pass
 
     def getCostOfActions(self, actions):
         """
