@@ -139,7 +139,9 @@ def breadthFirstSearch(problem):
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    priorityFunction = lambda state: state[2]
+    # priorityFunction = lambda state: state[2]
+    def priorityFunction(state):
+        return state[2]
     openlist = util.PriorityQueueWithFunction(priorityFunction)
     return solveSimpleSearch(problem, openlist)
 
@@ -156,7 +158,9 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest
     combined cost and heuristic first."""
-    priorityFunction = lambda state: state[2] + heuristic(state[0], problem)
+    # priorityFunction = lambda state: state[2] + heuristic(state[0], problem)
+    def priorityFunction(state):
+        return state[2] + heuristic(state[0], problem)
     openlist = util.PriorityQueueWithFunction(priorityFunction)
     return solveSimpleSearch(problem, openlist)
 
