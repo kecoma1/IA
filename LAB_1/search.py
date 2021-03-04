@@ -4,8 +4,8 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
-# Attribution Information: The Pacman AI projects were developed at UC Berkeley.
+# Attribution Information: The Pacman AI projects were developed at
+# UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
 # Student side autograding was added by Brad Miller, Nick Hay, and
@@ -19,10 +19,12 @@ Pacman agents (in searchAgents.py).
 import util
 from game import Directions
 
+
 class SearchProblem:
     """
-    This class outlines the structure of a search problem, but doesn't implement
-    any of the methods (in object-oriented terminology: an abstract class).
+    This class outlines the structure of a search problem,
+    but doesn't implement any of the methods
+    (in object-oriented terminology: an abstract class).
 
     You do not need to change anything in this class, ever.
     """
@@ -75,7 +77,6 @@ def tinyMazeSearch(problem):
 def solveSimpleSearch(problem, utils):
     """This method solves simple uninformed search algorithms which
         reuse same code. These algorithms are DFS, BFS and UCS
-        
     Args:
         problem: problem to solve
         utils: name of the data structure of util.py which will be used
@@ -91,28 +92,30 @@ def solveSimpleSearch(problem, utils):
 
     # Iterating
     while True:
-        # If the open list is empty error 
+        # If the open list is empty error
         if openedList.isEmpty():
             return None
 
-        # Getting the node from the stack to expand it and adding it to the search tree
-        currentNode = openedList.pop()    
+        # Getting the node from the opened list
+        currentNode = openedList.pop()
 
         # Checking if this is the goal
         if problem.isGoalState(currentNode[0]):
             return currentNode[3]
-        
-        # If the node is not in the closed list we add it and we expand it
+
+        # If the node is not in the closed list we add it and
+        # we expand it and we add it to the ckised list
         if not any(currentNode[0] == node[0] for node in closedList):
             closedList.append(currentNode)
-            # Iterating through the successors and adding them. Excluding the nodes that have been visited
+            # Iterating through the successors and adding them to the open list
             for child in problem.getSuccessors(currentNode[0]):
                 child_list = list(child)
                 # Adding to the child the route
                 child_list.append(currentNode[3].copy())
                 child_list[3].append(child[1])
                 # Adding to the child the accumulated cost
-                child_list[2] += currentNode[2] 
+                child_list[2] += currentNode[2]
+                # Adding the node to the closed list
                 openedList.push(child_list)
 
 
@@ -125,10 +128,6 @@ def depthFirstSearch(problem):
 
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
-
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     return solveSimpleSearch(problem, util.Stack())
 
@@ -141,21 +140,26 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     priorityFunction = lambda state: state[2]
-    return solveSimpleSearch(problem, util.PriorityQueueWithFunction(priorityFunction))
+    openlist = util.PriorityQueueWithFunction(priorityFunction)
+    return solveSimpleSearch(problem, openlist)
 
 
 def nullHeuristic(state, problem=None):
     """
-    A heuristic function estimates the cost from the current state to the nearest
-    goal in the provided SearchProblem.  This heuristic is trivial.
+    A heuristic function estimates the cost from
+    the current state to the nearest goal in the
+    provided SearchProblem. This heuristic is trivial.
     """
     return 0
 
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
+    """Search the node that has the lowest
+    combined cost and heuristic first."""
     priorityFunction = lambda state: state[2] + heuristic(state[0], problem)
-    return solveSimpleSearch(problem, util.PriorityQueueWithFunction(priorityFunction))
+    openlist = util.PriorityQueueWithFunction(priorityFunction)
+    return solveSimpleSearch(problem, openlist)
+
 
 # Abbreviations
 bfs = breadthFirstSearch
