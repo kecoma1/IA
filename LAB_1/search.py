@@ -19,9 +19,6 @@ Pacman agents (in searchAgents.py).
 import util
 from game import Directions
 
-heuristic_ = None
-problem_ = None
-
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -141,13 +138,10 @@ def breadthFirstSearch(problem):
     return solveSimpleSearch(problem, util.Queue())
 
 
-def ucPriorityFunction(item):
-    return item[2]
-
-
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    return solveSimpleSearch(problem, util.PriorityQueueWithFunction(ucPriorityFunction))
+    priorityFunction = lambda state: state[2]
+    return solveSimpleSearch(problem, util.PriorityQueueWithFunction(priorityFunction))
 
 
 def nullHeuristic(state, problem=None):
@@ -158,16 +152,10 @@ def nullHeuristic(state, problem=None):
     return 0
 
 
-def aPriorityFunction(item):
-    return heuristic_(item[0], problem_)+item[2]
-
-
 def aStarSearch(problem, heuristic=nullHeuristic):
-    global heuristic_, problem_
-    heuristic_ = heuristic
-    problem_ = problem
     """Search the node that has the lowest combined cost and heuristic first."""
-    return solveSimpleSearch(problem, util.PriorityQueueWithFunction(aPriorityFunction))
+    priorityFunction = lambda state: state[2] + heuristic(state[0], problem)
+    return solveSimpleSearch(problem, util.PriorityQueueWithFunction(priorityFunction))
 
 # Abbreviations
 bfs = breadthFirstSearch
