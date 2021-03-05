@@ -285,8 +285,10 @@ class CornersProblem(search.SearchProblem):
             if not startingGameState.hasFood(*corner):
                 print('Warning: no food in corner ' + str(corner))
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
-        self.visited = 4 # Variable to check if all the corners have been visited
-        
+        # Variable to check if all the corners have been visited
+        self.notvisited = list(self.corners) 
+        self.visited = 0
+        self.nodes = {self.visited:[]}
 
 
     def getStartState(self):
@@ -302,14 +304,14 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         # Checking if the current state is one of the corners
-        if state in self.corners:
-            self.visited -= 1
+        if state in self.notvisited:
+            self.notvisited.remove(state)
 
-        # If all corners are visited we return True    
-        if self.visited > 0:
-            return False
-        else:
+        # If all corners are visited we return True 
+        if not self.notvisited:
             return True
+        
+        return False
         
 
     def getSuccessors(self, state):
@@ -329,7 +331,14 @@ class CornersProblem(search.SearchProblem):
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             if not self.walls[nextx][nexty]:
-                pass
+                route = self.nodes[state].copy()
+                route.append(action)
+                cost = self.getCostOfActions(route)
+                successors.append(((nextx, nexty), action, 1))
+                # Adding the node route to the dictionary
+                self.nodes[(nextx, nexty)] = route
+        return successors
+
 
     def getCostOfActions(self, actions):
         """
@@ -514,6 +523,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         self.startState = gameState.getPacmanPosition()
         self.costFn = lambda x: 1
         self._visited, self._visitedlist, self._expanded = {}, [], 0 # DO NOT CHANGE
+
 
     def isGoalState(self, state):
         """
