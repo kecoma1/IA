@@ -8,9 +8,9 @@
             "name": "Python: Archivo actual",
             "type": "python",
             "request": "launch",
-            //"args": ["-l", "tinyCorners", "-p", "SearchAgent", "-a", "fn=bfs,prob=CornersProblem"],
-            //"program": "pacman.py",
-            "program": "autograder.py",
+            "args": ["-l", "tinyCorners", "-p", "SearchAgent", "-a", "fn=bfs,prob=CornersProblem"],
+            "program": "pacman.py",
+            //"program": "autograder.py",
             "console": "integratedTerminal"
         }
     ]

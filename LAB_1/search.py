@@ -74,17 +74,16 @@ def tinyMazeSearch(problem):
     return [s, s, w, s, w, w, s, w]
 
 
-def solveSimpleSearch(problem, utils):
+def solveSimpleSearch(problem, openedList):
     """This method solves simple uninformed search algorithms which
         reuse same code. These algorithms are DFS, BFS and UCS
     Args:
         problem: problem to solve
-        utils: name of the data structure of util.py which will be used
+        openedList: name of the data structure of util.py which will be used
     """
     start_state = problem.getStartState()
 
     # Initialize the opened-list with root-node
-    openedList = utils
     openedList.push([start_state, None, 0, []])
 
     # Initialize the closed-list as an empty list
@@ -100,6 +99,9 @@ def solveSimpleSearch(problem, utils):
         currentNode = openedList.pop()
 
         # Checking if this is the goal
+        if problem.isGoalState(currentNode[0]) == -1:
+            closedList.clear()
+            while (openedList.isEmpty() != True): openedList.pop()
         if problem.isGoalState(currentNode[0]):
             return currentNode[3]
 
@@ -118,43 +120,6 @@ def solveSimpleSearch(problem, utils):
                 # Adding the node to the closed list
                 openedList.push(child_list)
 
-def solveSimpleSearch_noGraph(problem, utils):
-    """This method solves simple uninformed search algorithms which
-        reuse same code. These algorithms are DFS, BFS and UCS
-    Args:
-        problem: problem to solve
-        utils: name of the data structure of util.py which will be used
-    """
-    start_state = problem.getStartState()
-
-    # Initialize the opened-list with root-node
-    openedList = utils
-    openedList.push([start_state, None, 0, []])
-
-    # Iterating
-    while True:
-        # If the open list is empty error
-        if openedList.isEmpty():
-            return None
-
-        # Getting the node from the opened list
-        currentNode = openedList.pop()
-
-        # Checking if this is the goal
-        if problem.isGoalState(currentNode[0]):
-            return currentNode[3]
-
-        # Iterating through the successors and adding them to the open list
-        for child in problem.getSuccessors(currentNode[0]):
-            child_list = list(child)
-            # Adding to the child the route
-            child_list.append(currentNode[3].copy())
-            child_list[3].append(child[1])
-            # Adding to the child the accumulated cost
-            child_list[2] += currentNode[2]
-            # Adding the node to the closed list
-            openedList.push(child_list)
-
 
 def depthFirstSearch(problem):
     """
@@ -171,7 +136,7 @@ def depthFirstSearch(problem):
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    return solveSimpleSearch_noGraph(problem, util.Queue())
+    return solveSimpleSearch(problem, util.Queue())
 
 
 def uniformCostSearch(problem):

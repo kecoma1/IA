@@ -287,8 +287,6 @@ class CornersProblem(search.SearchProblem):
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
         # Variable to check if all the corners have been visited
         self.notvisited = list(self.corners) 
-        self.visited = 0
-        self.nodes = {self.visited:[]}
 
 
     def getStartState(self):
@@ -306,6 +304,7 @@ class CornersProblem(search.SearchProblem):
         # Checking if the current state is one of the corners
         if state in self.notvisited:
             self.notvisited.remove(state)
+            return -1
 
         # If all corners are visited we return True 
         if not self.notvisited:
@@ -331,12 +330,7 @@ class CornersProblem(search.SearchProblem):
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             if not self.walls[nextx][nexty]:
-                route = self.nodes[state].copy()
-                route.append(action)
-                cost = self.getCostOfActions(route)
                 successors.append(((nextx, nexty), action, 1))
-                # Adding the node route to the dictionary
-                self.nodes[(nextx, nexty)] = route
         return successors
 
 
