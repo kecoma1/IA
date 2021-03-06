@@ -99,10 +99,8 @@ def solveSimpleSearch(problem, openedList):
         currentNode = openedList.pop()
 
         # Checking if this is the goal
-        if problem.isGoalState(currentNode[0]) == -1:
-            closedList.clear()
-            while (openedList.isEmpty() != True): openedList.pop()
         if problem.isGoalState(currentNode[0]):
+            problem.isGoalState(currentNode[0])
             return currentNode[3]
 
         # If the node is not in the closed list we add it and
