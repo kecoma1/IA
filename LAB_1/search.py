@@ -100,7 +100,6 @@ def solveSimpleSearch(problem, openedList):
 
         # Checking if this is the goal
         if problem.isGoalState(currentNode[0]):
-            problem.isGoalState(currentNode[0])
             return currentNode[3]
 
         # If the node is not in the closed list we add it and

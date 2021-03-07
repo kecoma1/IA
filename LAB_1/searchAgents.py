@@ -309,10 +309,14 @@ class CornersProblem(search.SearchProblem):
                 print('Warning: no food in corner ' + str(corner))
         self._expanded = 0  # DO NOT CHANGE; Number of search nodes expanded
         self.index = 0
-        self.not_visited = 4 
         self.routes = {self.index: [[], list(self.corners)]}
+        # WITH THIS WE ONLY ALLOW TO RETURN THE SUCCESSORS WHICH HAVE LESS OR THE SAME NUMBER OF CORNERS NOT VISITED
+        #---A--- self.minLen = 4 
+
+        # If the starting position is a corner we remove it
         if self.startingPosition in self.corners:
             self.routes[0][1].remove(self.startingPosition)
+            #---A--- self.minLen = 3
 
 
     def getStartState(self):
@@ -342,27 +346,40 @@ class CornersProblem(search.SearchProblem):
             is the incremental cost of expanding to that successor
         """
         successors = []
-        if self.not_visited < len(self.routes[state][1]):
-            return []
 
         # Add a successor state to the successor list if the action is legal
         x, y = self.getPos(state)
+
+        # Route to get to the current node
+        route = self.routes[state][0]
+        #---A--- cornersFound = self.routes[state][1] 
+
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
-            if not self.walls[nextx][nexty]:
-                if self.not_visited >= len(self.routes[state][1]):
-                    self.index += 1
-                    successors.append(((self.index), action, 1))
-                    self.routes[self.index] = [None, self.routes[state][1].copy()]
-                    self.routes[self.index][0] = self.routes[state][0].copy()
-                    self.routes[self.index][0].append(action)
-                    
+            if not self.walls[nextx][nexty]: #---A--- and self.minLen >= len(cornersFound): 
+                self.index += 1
+                successors.append((self.index, action, 1))
+                
+                # Adding the action to the route
+                route.append(action)
 
+                # Getting the visited corners and checking if we are in one
+                corners = self.routes[state][1]
+                if (nextx, nexty) in corners:
+                    corners.remove((nextx, nexty))
+                    #---A--- if self.minLen > len(corners):
+                    #---A---    self.minLen = len(corners)
+
+                # Adding the node to the dictionary
+                self.routes[self.index] = [route.copy(), corners.copy()]
+                del route[-1]
+
+                if len(corners) == 1:
+                    print("len 1")
+                
         self._expanded += 1  # DO NOT CHANGE
         if self._expanded % 1000 == 0:
-            print(self.not_visited)
-            print(self.routes[self.index][1])
             print(self._expanded)
         return successors
 
@@ -389,23 +406,8 @@ class CornersProblem(search.SearchProblem):
         for action in route:
             dx, dy = Actions.directionToVector(action)
             x, y = int(x + dx), int(y + dy)
-            # Checking if the route contains any of the corners
-            if (x, y) in self.routes[state][1]:
-                self.routes[state][1].remove((x, y))
-                # Storing the minimum number of corners left found
-                # in a route
-                if self.not_visited > len(self.routes[state][1]):
-                    self.not_visited = len(self.routes[state][1])
         return x, y
 
-        
-    def isStateInCorner(self, state):
-        # If the current state one of the goals state 
-        # we reduce the number of goals states visited by the route
-        if state in self.routes[state][1]:
-            self.routes[state][1].remove(state)
-            return True
-        return False
 
 def cornersHeuristic(state, problem):
     """
