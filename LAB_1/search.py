@@ -76,7 +76,7 @@ def tinyMazeSearch(problem):
 
 def solveSimpleSearch(problem, openedList):
     """This method solves simple uninformed search algorithms which
-        reuse same code. These algorithms are DFS, BFS and UCS
+        reuse same code. These algorithms are DFS, BFS, UCS and A*
     Args:
         problem: problem to solve
         openedList: name of the data structure of util.py which will be used
