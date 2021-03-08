@@ -74,19 +74,19 @@ def tinyMazeSearch(problem):
     return [s, s, w, s, w, w, s, w]
 
 
-def solveSimpleSearch(problem, openedList):
+def solveSimpleSearch(problem, opened_list):
     """This method solves simple uninformed search algorithms which
         reuse same code. These algorithms are DFS, BFS, UCS and A*
 
 
     Args:
         problem: problem to solve
-        openedList: name of the data structure of util.py which will be used
+        opened_list: name of the data structure of util.py which will be used
     """
     start_state = problem.getStartState()
 
     # Initialize the opened-list with root-node
-    openedList.push([start_state, None, 0, []]) # [Starting state, Last action, Cost, Path]
+    opened_list.push([start_state, None, 0, []]) # [Starting state, Last action, Cost, Path]
 
     # Initialize the closed-list as an empty list
     closedList = []
@@ -94,15 +94,15 @@ def solveSimpleSearch(problem, openedList):
     # Iterating
     while True:
         # If the open list is empty error
-        if openedList.isEmpty():
+        if opened_list.isEmpty():
             return None
 
         # Getting the node from the opened list
-        currentNode = openedList.pop()
+        currentNode = opened_list.pop()
 
         # Checking if this is the goal
         if problem.isGoalState(currentNode[0]):
-            return currentNode[3]
+            return currentNode[-1]
 
         # If the node is not in the closed list we add it and
         # we expand it and we add it to the closed list
@@ -117,7 +117,7 @@ def solveSimpleSearch(problem, openedList):
                 # Adding to the child the accumulated cost
                 child_node[2] += currentNode[2]
                 # Adding the node to the closed list
-                openedList.push(child_node)
+                opened_list.push(child_node)
 
 
 def depthFirstSearch(problem):
@@ -160,10 +160,10 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest
     combined cost and heuristic first."""
     # priorityFunction = lambda state: state[2] + heuristic(state[0], problem)
-    def priorityFunction(state):
+    def priority_function(state):
         return state[2] + heuristic(state[0], problem)
-    openlist = util.PriorityQueueWithFunction(priorityFunction)
-    return solveSimpleSearch(problem, openlist)
+    opened_list = util.PriorityQueueWithFunction(priority_function)
+    return solveSimpleSearch(problem, opened_list)
 
 
 # Abbreviations

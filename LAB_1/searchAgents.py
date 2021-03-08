@@ -304,27 +304,22 @@ class CornersProblem(search.SearchProblem):
         self.startingPosition = startingGameState.getPacmanPosition()
         top, right = self.walls.height-2, self.walls.width-2
         self.corners = ((1, 1), (1, top), (right, 1), (right, top))
+        starting_position_corners = list(self.corners)
         for corner in self.corners:
             if not startingGameState.hasFood(*corner):
                 print('Warning: no food in corner ' + str(corner))
+                starting_position_corners.remove(corner)
         self._expanded = 0  # DO NOT CHANGE; Number of search nodes expanded
-        self.index = 0
-        self.routes = {self.index: [[], list(self.corners)]}
-        # WITH THIS WE ONLY ALLOW TO RETURN THE SUCCESSORS WHICH HAVE LESS OR THE SAME NUMBER OF CORNERS NOT VISITED
-        #---A--- self.minLen = 4 
 
-        # If the starting position is a corner we remove it
-        if self.startingPosition in self.corners:
-            self.routes[0][1].remove(self.startingPosition)
-            #---A--- self.minLen = 3
-
+        # We define a starting state which includes the starting positions
+        self.starting_state = (self.startingPosition, starting_position_corners)
 
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        return 0
+        return self.starting_state
 
 
     def isGoalState(self, state):
@@ -332,7 +327,7 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         # If all corners are visited we return True
-        return len(self.routes[state][1]) == 0
+        return len(state[1]) == 0
 
 
     def getSuccessors(self, state):
@@ -347,40 +342,27 @@ class CornersProblem(search.SearchProblem):
         """
         successors = []
 
-        # Add a successor state to the successor list if the action is legal
-        x, y = self.getPos(state)
-
-        # Route to get to the current node
-        route = self.routes[state][0]
-        #---A--- cornersFound = self.routes[state][1] 
+        # Getting the position in the state
+        (x, y) = state[0]
 
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
-            if not self.walls[nextx][nexty]: #---A--- and self.minLen >= len(cornersFound): 
-                self.index += 1
-                successors.append((self.index, action, 1))
-                
-                # Adding the action to the route
-                route.append(action)
+            if not self.walls[nextx][nexty]:
+                # Building the structure of the child state
+                child_state = ((nextx, nexty), state[1].copy())
 
-                # Getting the visited corners and checking if we are in one
-                corners = self.routes[state][1]
-                if (nextx, nexty) in corners:
-                    corners.remove((nextx, nexty))
-                    #---A--- if self.minLen > len(corners):
-                    #---A---    self.minLen = len(corners)
+                # If the postion is in a corner, we remove that 
+                # position from the not visited corners
+                if child_state[0] in child_state[1]:
+                    child_state[1].remove(child_state[0])
 
-                # Adding the node to the dictionary
-                self.routes[self.index] = [route.copy(), corners.copy()]
-                del route[-1]
+                # Building the structure of the child node
+                child_node = (child_state, action, 1)
 
-                if len(corners) == 1:
-                    print("len 1")
+                successors.append(child_node)
                 
         self._expanded += 1  # DO NOT CHANGE
-        if self._expanded % 1000 == 0:
-            print(self._expanded)
         return successors
 
 
@@ -400,13 +382,13 @@ class CornersProblem(search.SearchProblem):
         return len(actions)
 
 
-    def getPos(self, state):
+"""    def getPos(self, state):
         route = self.routes[state][0]
         x, y = self.startingPosition
         for action in route:
             dx, dy = Actions.directionToVector(action)
             x, y = int(x + dx), int(y + dy)
-        return x, y
+        return x, y"""
 
 
 def cornersHeuristic(state, problem):
