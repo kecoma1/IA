@@ -77,6 +77,8 @@ def tinyMazeSearch(problem):
 def solveSimpleSearch(problem, openedList):
     """This method solves simple uninformed search algorithms which
         reuse same code. These algorithms are DFS, BFS, UCS and A*
+
+
     Args:
         problem: problem to solve
         openedList: name of the data structure of util.py which will be used
@@ -84,7 +86,7 @@ def solveSimpleSearch(problem, openedList):
     start_state = problem.getStartState()
 
     # Initialize the opened-list with root-node
-    openedList.push([start_state, None, 0, []])
+    openedList.push([start_state, None, 0, []]) # [Starting state, Last action, Cost, Path]
 
     # Initialize the closed-list as an empty list
     closedList = []
@@ -103,19 +105,19 @@ def solveSimpleSearch(problem, openedList):
             return currentNode[3]
 
         # If the node is not in the closed list we add it and
-        # we expand it and we add it to the ckised list
+        # we expand it and we add it to the closed list
         if not any(currentNode[0] == node[0] for node in closedList):
             closedList.append(currentNode)
             # Iterating through the successors and adding them to the open list
             for child in problem.getSuccessors(currentNode[0]):
-                child_list = list(child)
+                child_node = list(child)
                 # Adding to the child the route
-                child_list.append(currentNode[3].copy())
-                child_list[3].append(child[1])
+                child_node.append(currentNode[-1])
+                child_node[-1] = currentNode[-1] + [child[1]]
                 # Adding to the child the accumulated cost
-                child_list[2] += currentNode[2]
+                child_node[2] += currentNode[2]
                 # Adding the node to the closed list
-                openedList.push(child_list)
+                openedList.push(child_node)
 
 
 def depthFirstSearch(problem):
