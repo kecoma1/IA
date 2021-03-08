@@ -89,7 +89,7 @@ def solveSimpleSearch(problem, opened_list):
     opened_list.push([start_state, None, 0, []]) # [Starting state, Last action, Cost, Path]
 
     # Initialize the closed-list as an empty list
-    closedList = []
+    closed_list = []
 
     # Iterating
     while True:
@@ -98,24 +98,28 @@ def solveSimpleSearch(problem, opened_list):
             return None
 
         # Getting the node from the opened list
-        currentNode = opened_list.pop()
+        current_node = opened_list.pop()
 
         # Checking if this is the goal
-        if problem.isGoalState(currentNode[0]):
-            return currentNode[-1]
+        if problem.isGoalState(current_node[0]):
+            return current_node[-1]
 
         # If the node is not in the closed list we add it and
         # we expand it and we add it to the closed list
-        if not any(currentNode[0] == node[0] for node in closedList):
-            closedList.append(currentNode)
+        if not any(current_node[0] == node[0] for node in closed_list):
+            closed_list.append(current_node)
             # Iterating through the successors and adding them to the open list
-            for child in problem.getSuccessors(currentNode[0]):
+            for child in problem.getSuccessors(current_node[0]):
                 child_node = list(child)
-                # Adding to the child the route
-                child_node.append(currentNode[-1])
-                child_node[-1] = currentNode[-1] + [child[1]]
+
+                # Adding to the child the route to get there
+                # child path = current node path + action to get to the node
+                child_node.append(current_node[-1])
+                child_node[-1] = current_node[-1] + [child[1]]
+
                 # Adding to the child the accumulated cost
-                child_node[2] += currentNode[2]
+                child_node[2] += current_node[2]
+
                 # Adding the node to the closed list
                 opened_list.push(child_node)
 

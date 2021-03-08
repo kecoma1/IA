@@ -326,7 +326,8 @@ class CornersProblem(search.SearchProblem):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        # If all corners are visited we return True
+        # Checking the lenght of the corners in the state
+        # If list containing the corners is empty, return true
         return len(state[1]) == 0
 
 
