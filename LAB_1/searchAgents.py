@@ -1,3 +1,5 @@
+# Edited by Kevin de la Coba Malam and Juan Luis Sanz. Group 2392, pair 01
+
 # searchAgents.py
 # ---------------
 # Licensing Information:  You are free to use or extend these projects for
@@ -408,8 +410,6 @@ def cornersHeuristic(state, problem):
     # These are the walls of the maze, as a Grid (game.py)
     walls = problem.walls
 
-    #value = (len(state[1]))
-    # print("value:", value, "----","corners left:", len(state[1]),"------", farthest_corner(state), "----------", closest_corner(state), "----", farthest_corner(state) >= closest_corner(state))
     if len(state[1]) == 0:
         return 0
     value = (walls_between(state, walls.asList()))**len(state[1])
