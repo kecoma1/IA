@@ -11,7 +11,6 @@
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
-
 """
 This file contains all of the agents that can be selected to control Pacman.  To
 select an agent, use the '-p' option when running pacman.py.  Arguments can be
@@ -409,8 +408,65 @@ def cornersHeuristic(state, problem):
     # These are the walls of the maze, as a Grid (game.py)
     walls = problem.walls
 
-    "*** YOUR CODE HERE ***"
-    return 0  # Default to trivial solution
+    #value = (len(state[1]))
+    # print("value:", value, "----","corners left:", len(state[1]),"------", farthest_corner(state), "----------", closest_corner(state), "----", farthest_corner(state) >= closest_corner(state))
+    if len(state[1]) == 0:
+        return 0
+    value = (walls_between(state, walls.asList()))**len(state[1])
+    return value
+
+
+def closest_corner(state):
+    position = state[0]
+    distance = 0
+    minimum_distance = 99999
+    closest_corner = None
+    for corner in state[1]:
+        distance = abs(position[0] - corner[0]) + abs(position[1] - corner[1])
+        if minimum_distance > distance:
+            minimum_distance = distance
+            closest_corner = corner
+    return closest_corner
+
+
+def closest_corner_distance(state):
+    position = state[0]
+    distance = 0
+    minimum_distance = 99999
+    for corner in state[1]:
+        distance = abs(position[0] - corner[0]) + abs(position[1] - corner[1])
+        if minimum_distance > distance:
+            minimum_distance = distance
+    return minimum_distance
+
+
+def walls_between(state, walls):
+    x, y = state[0]
+    corner = closest_corner(state)
+    if corner is None:
+        return 0
+    else:
+        cor_x, cor_y = corner
+    num_walls = 1
+
+    # Moving in X and counting the walls between
+    while x != cor_x:
+        if x < cor_x:
+            x += 1
+        else: 
+            x -= 1
+        if (x,y) in walls:
+            num_walls += 1
+    
+    # Moving in Y and counting the walls between
+    while y != cor_y:
+        if y < cor_y:
+            y += 1
+        else: 
+            y -= 1
+        if (x,y) in walls:
+            num_walls += 1
+    return num_walls
 
 
 class AStarCornersAgent(SearchAgent):
