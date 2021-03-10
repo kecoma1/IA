@@ -1,3 +1,5 @@
+# Edited by Kevin de la Coba Malam and Juan Luis Sanz. Group 2392, pair 01
+
 # search.py
 # ---------
 # Licensing Information:  You are free to use or extend these projects for
