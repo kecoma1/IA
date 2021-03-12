@@ -197,13 +197,70 @@ class MinimaxAlphaBetaStrategy(Strategy):
         self.heuristic = heuristic
         self.max_depth_minimax = max_depth_minimax
 
+
     def next_move(
         self,
         state: TwoPlayerGameState,
         gui: bool = False,
     ) -> TwoPlayerGameState:
         """Compute next state in the game."""
+        successors = self.generate_successors(state)
 
-        # NOTE <YOUR CODE HERE>
+        minimax_value = -np.inf
+        alpha = -np.inf
+        beta = np.inf
+
+        for successor in successors:
+            if self.verbose > 1:
+                print('{}: {}'.format(state.board, minimax_value))
+
+            successor_alpha_beta_value = self._min_value(
+                successor,
+                alpha,
+                beta,
+                self.max_depth_minimax,
+            )
+            if (successor_alpha_beta_value > alpha):
+                alpha = successor_alpha_beta_value
+                next_state = successor
+
+        if self.verbose > 0:
+            if self.verbose > 1:
+                print('\nGame state before move:\n')
+                print(state.board)
+                print()
+            print('Minimax value = {:.2g}'.format(minimax_value))
 
         return next_state
+    
+
+    def _min_value(
+        self,
+        state: TwoPlayerGameState,
+        alpha: float,
+        beta: float,
+        depth: int,
+    ) -> float:
+        """Min step of the alpha beta algorithm."""
+        if state.end_of_game or depth == 0:
+            beta = self.heuristic.evaluate(state)
+
+        else:
+            beta = np.inf
+
+            successors = self.generate_successors(state)
+            for successor in successors:
+                if self.verbose > 1:
+                    print('{}: {}'.format(state.board, beta))
+
+                successor_beta = self._max_value(
+                    successor, depth - 1,
+                )
+                if (successor_beta < beta):
+                    beta = successor_minimax_value
+
+        if self.verbose > 1:
+            print('{}: {}'.format(state.board, beta))
+
+        return beta
+
