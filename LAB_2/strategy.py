@@ -206,13 +206,12 @@ class MinimaxAlphaBetaStrategy(Strategy):
         """Compute next state in the game."""
         successors = self.generate_successors(state)
 
-        minimax_value = -np.inf
         alpha = -np.inf
         beta = np.inf
 
         for successor in successors:
             if self.verbose > 1:
-                print('{}: {}'.format(state.board, minimax_value))
+                print('{}: {}'.format(state.board, alpha))
 
             successor_alpha_beta_value = self._min_value(
                 successor,
@@ -229,7 +228,7 @@ class MinimaxAlphaBetaStrategy(Strategy):
                 print('\nGame state before move:\n')
                 print(state.board)
                 print()
-            print('Minimax value = {:.2g}'.format(minimax_value))
+            print('Alpha value = {:.2g}'.format(alpha))
 
         return next_state
     
@@ -243,24 +242,69 @@ class MinimaxAlphaBetaStrategy(Strategy):
     ) -> float:
         """Min step of the alpha beta algorithm."""
         if state.end_of_game or depth == 0:
-            beta = self.heuristic.evaluate(state)
-
+            phi = self.heuristic.evaluate(state)
         else:
-            beta = np.inf
+            phi = np.inf
 
             successors = self.generate_successors(state)
             for successor in successors:
                 if self.verbose > 1:
-                    print('{}: {}'.format(state.board, beta))
+                    print('{}: {}'.format(state.board, phi))
 
-                successor_beta = self._max_value(
-                    successor, depth - 1,
+                successor_alpha = self._max_value(
+                    successor, alpha, beta, depth - 1
                 )
-                if (successor_beta < beta):
-                    beta = successor_minimax_value
+
+                # Minimizing the max value
+                if (successor_alpha < phi):
+                    phi = successor_alpha
+
+                # Pruning
+                if phi <= alpha:
+                    return phi
+
+                beta = min(beta, phi)
 
         if self.verbose > 1:
             print('{}: {}'.format(state.board, beta))
 
-        return beta
+        return phi
+
+
+    def _max_value(
+        self,
+        state: TwoPlayerGameState,
+        alpha: float,
+        beta: float,
+        depth: int,
+    ) -> float:
+        """Min step of the alpha beta algorithm."""
+        if state.end_of_game or depth == 0:
+            phi = self.heuristic.evaluate(state)
+        else:
+            phi = -np.inf
+
+            successors = self.generate_successors(state)
+            for successor in successors:
+                if self.verbose > 1:
+                    print('{}: {}'.format(state.board, phi))
+
+                successor_beta = self._min_value(
+                    successor, alpha, beta, depth - 1
+                )
+
+                # Maximizing the min value
+                if (successor_beta > phi):
+                    phi = successor_beta
+
+                # Pruning
+                if phi >= beta:
+                    return phi
+
+                alpha = max(alpha, phi)
+
+        if self.verbose > 1:
+            print('{}: {}'.format(state.board, beta))
+
+        return phi
 

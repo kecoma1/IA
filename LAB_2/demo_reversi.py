@@ -62,6 +62,15 @@ player_minimax4 = Player(
     ),
 )
 
+player_alphabeta = Player(
+    name='AlphaBeta',
+    strategy=MinimaxAlphaBetaStrategy(
+        heuristic=heuristic,
+        max_depth_minimax=4,
+        verbose=0,
+    ),
+)
+
 
 # Manual vs manual player
 # player_a, player_b = player_manual, player_manual2
@@ -71,7 +80,7 @@ player_minimax4 = Player(
 
 
 # minimax vs minimax player
-player_a, player_b = player_minimax3, player_minimax4
+player_a, player_b = player_alphabeta, player_random2
 
 
 """
