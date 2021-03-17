@@ -24,12 +24,16 @@ so that the tournament runs faster.
 """
 
 class StudentHeuristic(ABC):
-    def __init__(self):
-        pass
-    def evaluation_function(self, state: TwoPlayerGameState) -> float:
-        pass
+    def __init__(self, name, evaluation_funtion):
+        self.name = name
+        self.evaluation_funtion = evaluation_funtion
+
+    def evaluate(self, state: TwoPlayerGameState) -> float:
+        state_copy = state.clone()
+        return self.evaluation_function(state_copy)
+
     def get_name(self) -> str:
-        pass
+        return self.name
 
 
 class Tournament(object):

@@ -11,6 +11,8 @@ from __future__ import annotations  # For Python 3.7
 
 from game import Player, TwoPlayerGameState, TwoPlayerMatch
 from heuristic import heuristic
+from tournament import StudentHeuristic
+
 from reversi import (
     Reversi,
     from_array_to_dictionary_board,
@@ -21,6 +23,12 @@ from strategy import (
     MinimaxAlphaBetaStrategy,
     MinimaxStrategy,
     RandomStrategy,
+)
+
+from student_heuristic import (
+    MySolution1,
+    MySolution2,
+    MySolution3,
 )
 
 player_manual = Player(
@@ -65,7 +73,25 @@ player_minimax4 = Player(
 player_alphabeta = Player(
     name='AlphaBeta',
     strategy=MinimaxAlphaBetaStrategy(
-        heuristic=heuristic,
+        heuristic=MySolution1("Walls and corners", None),
+        max_depth_minimax=4,
+        verbose=0,
+    ),
+)
+
+player_alphabeta2 = Player(
+    name='AlphaBeta',
+    strategy=MinimaxAlphaBetaStrategy(
+        heuristic=MySolution2("Only walls", None),
+        max_depth_minimax=4,
+        verbose=0,
+    ),
+)
+
+player_alphabeta3 = Player(
+    name='AlphaBeta',
+    strategy=MinimaxAlphaBetaStrategy(
+        heuristic=MySolution3("Only Corners", None),
         max_depth_minimax=4,
         verbose=0,
     ),
@@ -80,7 +106,7 @@ player_alphabeta = Player(
 
 
 # minimax vs minimax player
-player_a, player_b = player_alphabeta, player_random2
+player_a, player_b = player_alphabeta3, player_minimax4
 
 
 """

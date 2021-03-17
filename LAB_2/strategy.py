@@ -197,7 +197,6 @@ class MinimaxAlphaBetaStrategy(Strategy):
         self.heuristic = heuristic
         self.max_depth_minimax = max_depth_minimax
 
-
     def next_move(
         self,
         state: TwoPlayerGameState,
@@ -231,7 +230,6 @@ class MinimaxAlphaBetaStrategy(Strategy):
             print('Alpha value = {:.2g}'.format(alpha))
 
         return next_state
-    
 
     def _min_value(
         self,
@@ -270,7 +268,6 @@ class MinimaxAlphaBetaStrategy(Strategy):
 
         return phi
 
-
     def _max_value(
         self,
         state: TwoPlayerGameState,
@@ -307,4 +304,3 @@ class MinimaxAlphaBetaStrategy(Strategy):
             print('{}: {}'.format(state.board, beta))
 
         return phi
-

@@ -101,7 +101,6 @@ def complex_evaluation_function(state: TwoPlayerGameState) -> float:
 
     return state_value
 
-
 heuristic = Heuristic(
     name='Simple heuristic',
     evaluation_function=simple_evaluation_function,
