@@ -27,8 +27,7 @@ from strategy import (
 
 from student_heuristic import (
     MySolution1,
-    MySolution2,
-    MySolution3,
+    WeightedBoard,
 )
 
 player_manual = Player(
@@ -65,7 +64,7 @@ player_minimax4 = Player(
     name='Minimax_4',
     strategy=MinimaxStrategy(
         heuristic=heuristic,
-        max_depth_minimax=4,
+        max_depth_minimax=2,
         verbose=0,
     ),
 )
@@ -74,21 +73,21 @@ player_alphabeta = Player(
     name='AlphaBeta',
     strategy=MinimaxAlphaBetaStrategy(
         heuristic=MySolution1("Walls and corners", None),
-        max_depth_minimax=4,
+        max_depth_minimax=2,
         verbose=0,
     ),
 )
 
 player_alphabeta2 = Player(
-    name='AlphaBeta',
+    name='Weighted Board Player',
     strategy=MinimaxAlphaBetaStrategy(
-        heuristic=MySolution2("Only walls", None),
+        heuristic=WeightedBoard("Weighted board", None),
         max_depth_minimax=4,
         verbose=0,
     ),
 )
 
-player_alphabeta3 = Player(
+"""player_alphabeta3 = Player(
     name='AlphaBeta',
     strategy=MinimaxAlphaBetaStrategy(
         heuristic=MySolution3("Only Corners", None),
@@ -96,7 +95,7 @@ player_alphabeta3 = Player(
         verbose=0,
     ),
 )
-
+"""
 
 # Manual vs manual player
 # player_a, player_b = player_manual, player_manual2
@@ -106,7 +105,7 @@ player_alphabeta3 = Player(
 
 
 # minimax vs minimax player
-player_a, player_b = player_alphabeta3, player_minimax4
+player_a, player_b = player_alphabeta2, player_alphabeta
 
 
 """
@@ -117,7 +116,8 @@ E.g., it can be an intermediate state.
 initial_player = player_a  # Player who moves first.
 
 # Board at an intermediate state of the game.
-initial_board = (
+initial_board = None
+(
     ['..B.B..',
      '.WBBW..',
      'WBWBB..',
@@ -159,7 +159,7 @@ game_state = TwoPlayerGameState(
 # Initialize a match.
 match = TwoPlayerMatch(
     game_state,
-    max_sec_per_move=1000,
+    max_sec_per_move=60,
     gui=True,
 )
 
