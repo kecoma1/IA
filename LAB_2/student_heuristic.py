@@ -72,7 +72,7 @@ class WeightedBoard(StudentHeuristic):
         self.height = height
         self.enemy_label = state.next_player.label
 
-        # Setting the attributes for the postion of each important cell
+        # Setting the attributes for the postion of each important cells
         self.corners = self.get_corners(self.width,
                                         self.height)
 
@@ -127,11 +127,9 @@ class WeightedBoard(StudentHeuristic):
         return sum_value
 
     def store_cell_values(self, board):
-        """Method to store the value of each cell. Depending on
-        which cells are occupied in the board, the heuristic returns
-        one value or another. There are values such as the corners
-        that are more valuable than others, but the cells that
-        allow the other player to take a corner must not be taken.
+        """Method to store the value of each cell. This method
+        is designed to store the prevous board, so when we compute
+        the new board we can get rid of the cells that didn't change
 
         Args:
             board (dict): Dictionary containing the occupied cells
@@ -168,7 +166,7 @@ class WeightedBoard(StudentHeuristic):
         if cell in self.corners:
             return 100*occupied_by
 
-        # Cells diagonal next to the corners 50
+        # Cells diagonal next to the corners -50
         elif cell in self.diag_corners:
             return -50*occupied_by
 
@@ -180,7 +178,8 @@ class WeightedBoard(StudentHeuristic):
         elif cell in self.powerful_cells:
             return 10*occupied_by
 
-        # Cells that are in a wall
+        # Cells that are in a wall and not in
+        # the previous places
         elif cell[0] == self.width or cell[0] == 1\
                 or cell[1] == self.height or cell[1] == 1:
             return 5*occupied_by
