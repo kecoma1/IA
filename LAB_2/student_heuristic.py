@@ -47,7 +47,7 @@ class WeightedBoard(StudentHeuristic):
 
         # Attributes related with the previous board
         self.previous_board = None
-        self.previous_board_sum = 0
+        # Each cell is stored with (label, value)
         self.previous_board_cells = {}
 
     def get_name(self) -> str:
@@ -72,7 +72,7 @@ class WeightedBoard(StudentHeuristic):
         self.height = height
         self.enemy_label = state.next_player.label
 
-        # Setting the attributes that for the postion of each important cell
+        # Setting the attributes for the postion of each important cell
         self.corners = self.get_corners(self.width,
                                         self.height)
 
@@ -105,6 +105,14 @@ class WeightedBoard(StudentHeuristic):
         return self.get_current_sum(state.board)
 
     def get_current_sum(self, board):
+        """Method to get the sum of a given board
+
+        Args:
+            board (dict): Dictionary with the occupied cells.
+
+        Returns:
+            int: Weighted sum of the entire board
+        """
         sum_value = 0
         for cell in board:
             # If the cell changed from the previous
@@ -179,7 +187,7 @@ class WeightedBoard(StudentHeuristic):
 
         # Internal cells
         else:
-            return occupied_by
+            return -occupied_by
 
     def get_corners(self, width, height):
         """Method to get the corners of the board
