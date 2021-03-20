@@ -26,8 +26,8 @@ from strategy import (
 )
 
 from student_heuristic import (
-    MySolution1,
-    WeightedBoard,
+    MaxCellsKJ,
+    WeightedBoardKJ,
 )
 
 player_manual = Player(
@@ -70,9 +70,9 @@ player_minimax4 = Player(
 )
 
 player_alphabeta = Player(
-    name='AlphaBeta',
+    name='MaxCells',
     strategy=MinimaxAlphaBetaStrategy(
-        heuristic=MySolution1("Walls and corners", None),
+        heuristic=MaxCellsKJ("Maximizing cells", None),
         max_depth_minimax=2,
         verbose=0,
     ),
@@ -81,7 +81,7 @@ player_alphabeta = Player(
 player_alphabeta2 = Player(
     name='Weighted Board Player',
     strategy=MinimaxAlphaBetaStrategy(
-        heuristic=WeightedBoard("Weighted board", None),
+        heuristic=WeightedBoardKJ("Weighted board", None),
         max_depth_minimax=4,
         verbose=0,
     ),

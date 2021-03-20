@@ -9,36 +9,39 @@ from tournament import (
 import math
 
 
-class MySolution1(StudentHeuristic):
-
+class MaxCellsKJ(StudentHeuristic):
     def get_name(self) -> str:
-        return "mysolution1"
+        return "MaxCellsKJ"
 
     def evaluate(self, state: TwoPlayerGameState) -> float:
-        return self.corners_and_walls_left(state)
+        return self.possible_score(state)
 
-    def corners_and_walls_left(self, state: TwoPlayerGameState) -> int:
-        height = state.game.height
-        width = state.game.width
-        corners = ((1, 1), (1, height), (1, width), (height, width))
+    def possible_score(self, state: TwoPlayerGameState) -> int:
+        """Method to get the "score" in the state. The more cells
+        we have, the better.
 
-        # Each corners has a value of 4. A corner
-        # is more valuable than a wall.
-        total_walls_and_corners = 4*4 + height*2 + width*2
+        possible_score = max_score - #·cells occupied by us
 
-        for occupied in state.board:
-            # If a corner is occupied we decrement
-            if occupied in corners:
-                total_walls_and_corners -= 4
+        The smaller the number, the better.
 
-            # If a wall is occupied we decrement
-            if height in occupied or width in occupied:
-                total_walls_and_corners -= 1
+        Args:
+            state (TwoPlayerGameState): State of the actual game
 
-        return total_walls_and_corners
+        Returns:
+            int: The "score" of the state
+        """
+        enemy_label = state.next_player.label
+        max_possible_score = state.game.width*state.game.height
+        board = state.board
+
+        for cell in board:
+            if board[cell] != enemy_label:
+                max_possible_score -= 1
+
+        return max_possible_score
 
 
-class WeightedBoard(StudentHeuristic):
+class WeightedBoardKJ(StudentHeuristic):
     def __init__(self, name, evaluation_function):
         super().__init__(name, evaluation_function)
 
@@ -315,51 +318,3 @@ class WeightedBoard(StudentHeuristic):
         powerful_cells.append((width, height-2))
 
         return powerful_cells
-
-
-"""class MySolution3 (StudentHeuristic):
-
-    def get_name (self) -> str:
-        return "mysolution1"
-
-    def evaluate(self, state: TwoPlayerGameState) -> float:
-        return self.num_corners_left(state)
-
-    def game_weight(self, state: TwoPlayerGameState) -> int:
-        height = state.game.height
-        width = state.game.width
-        total_corners = 4
-        corners = ((1, 1), (1, height), (1, width), (height, width))
-
-        # For each corner in the game, if it is
-        # occupied we decrement the value
-        for occupied in state.board:
-            if occupied in corners: 
-                total_corners -= 1
-
-        return total_corners
-        
-
-    def build_board_weights(self, height, width, corners):
-        board = {}
-        num=0
-
-        if (width % 2 != 0):
-            mid = math.ceil(width/2)
-            for x in range(height):
-                for y in range(width):
-                    if (x == mid - 1 || x == mid || x == mid+1):
-                        if (y == mid - 1 || y == mid || y == mid+1)
-                            board[(x, y)] = -1
-        else:
-            mid = math.floor(width/2)
-        
-        
-        for x in range(height):
-            for y in range(width):
-                # Assigning the weigh of the corners
-                if (x, y) in corners:
-                    board[(x, y)] = 100
-"""
-                
-
