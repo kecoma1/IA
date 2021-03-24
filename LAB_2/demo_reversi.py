@@ -26,6 +26,7 @@ from strategy import (
 )
 
 from student_heuristic import (
+    SimpleKJ,
     MaxCellsKJ,
     WeightedBoardKJ,
 )
@@ -87,15 +88,15 @@ player_alphabeta2 = Player(
     ),
 )
 
-"""player_alphabeta3 = Player(
+player_alphabeta3 = Player(
     name='AlphaBeta',
     strategy=MinimaxAlphaBetaStrategy(
-        heuristic=MySolution3("Only Corners", None),
+        heuristic=SimpleKJ("Simple", None),
         max_depth_minimax=4,
         verbose=0,
     ),
 )
-"""
+
 
 # Manual vs manual player
 # player_a, player_b = player_manual, player_manual2
@@ -105,7 +106,7 @@ player_alphabeta2 = Player(
 
 
 # minimax vs minimax player
-player_a, player_b = player_alphabeta2, player_alphabeta
+player_a, player_b = player_alphabeta3, player_alphabeta
 
 
 """

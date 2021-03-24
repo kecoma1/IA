@@ -24,16 +24,12 @@ so that the tournament runs faster.
 """
 
 class StudentHeuristic(ABC):
-    def __init__(self, name, evaluation_funtion):
-        self.name = name
-        self.evaluation_funtion = evaluation_funtion
-
-    def evaluate(self, state: TwoPlayerGameState) -> float:
-        state_copy = state.clone()
-        return self.evaluation_function(state_copy)
-
+    def __init__(self):
+        pass
+    def evaluation_function(self, state: TwoPlayerGameState) -> float:
+        pass
     def get_name(self) -> str:
-        return self.name
+        pass
 
 
 class Tournament(object):
@@ -112,7 +108,7 @@ class Tournament(object):
                     for depth in range(1, self.__max_depth):
                         pl1 = Player(
                             name=name1,
-                            strategy=MinimaxStrategy(
+                            strategy=MinimaxStrategy( # MinimaxAlphaBetaStrategy(
                                 heuristic=Heuristic(name=sh1.get_name(), evaluation_function=sh1.evaluation_function),
                                 max_depth_minimax=depth,
                                 verbose=0,
@@ -120,7 +116,7 @@ class Tournament(object):
                         )
                         pl2 = Player(
                             name=name2,
-                            strategy=MinimaxAStrategy(
+                            strategy=MinimaxStrategy( # MinimaxAlphaBetaStrategy(
                                 heuristic=Heuristic(name=sh2.get_name(), evaluation_function=sh2.evaluation_function),
                                 max_depth_minimax=depth,
                                 verbose=0,
@@ -132,7 +128,7 @@ class Tournament(object):
                     depth=self.__max_depth
                     pl1 = Player(
                         name=name1,
-                        strategy=MinimaxStrategy(
+                        strategy=MinimaxStrategy( # MinimaxAlphaBetaStrategy(
                             heuristic=Heuristic(name=sh1.get_name(), evaluation_function=sh1.evaluation_function),
                             max_depth_minimax=depth,
                             verbose=0,
@@ -140,7 +136,7 @@ class Tournament(object):
                     )
                     pl2 = Player(
                         name=name2,
-                        strategy=MinimaxStrategy(
+                        strategy=MinimaxStrategy( # MinimaxAlphaBetaStrategy(
                             heuristic=Heuristic(name=sh2.get_name(), evaluation_function=sh2.evaluation_function),
                             max_depth_minimax=depth,
                             verbose=0,

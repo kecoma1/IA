@@ -6,44 +6,77 @@ from tournament import (
     StudentHeuristic,
 )
 
-import math
+class SimpleKJ (StudentHeuristic):
+    def __init__(self):
+        # Attribute to check if the data is set
+        self.info_set = False
 
+    def get_name (self) -> str:
+        return "SimpleKJ"
 
-class MaxCellsKJ(StudentHeuristic):
-    def get_name(self) -> str:
-        return "MaxCellsKJ"
+    def evaluation_function(self, state: TwoPlayerGameState) -> float:
+        if self.info_set is False:
+            self.set_info(state.game.width, state.game.height)
 
-    def evaluate(self, state: TwoPlayerGameState) -> float:
-        return self.possible_score(state)
+        return self.num_walls_left(state)
 
-    def possible_score(self, state: TwoPlayerGameState) -> int:
-        """Method to get the "score" in the state. The more cells
-        we have, the better.
-
-        possible_score = max_score - #·cells occupied by us
-
-        The smaller the number, the better.
+    def set_info(self, width, height):
+        """Setter for the info
 
         Args:
-            state (TwoPlayerGameState): State of the actual game
+            width (int): Width of the board
+            height (int): Height of the board
+        """
+        self.info_set = True
+        self.width = width
+        self.height = height
+
+        self.corners = self.get_corners(self.width,
+                                        self.height)
+
+    def num_walls_left (self, state: TwoPlayerGameState) -> int:
+        height = state.game.height
+        width = state.game.width
+        total_walls = (height*2 + width*2) - 4
+        total_corners = 4 
+        total_cost = (total_walls * 2) + (total_corners * 10) + (height * width)
+
+        # For each cell in the game, if it is 
+        # occupied we decrement the value depending
+        # on its worth: 
+        # -Any cell: 1
+        # -Wall cell: +2
+        # -Corner cell: +10
+        for occupied in state.board:
+            if height in occupied or 1 in occupied:
+                # If it is a corner, decrement 1 plus 10 (corners more important)
+                if occupied in self.corners:
+                    total_cost -= 11
+                # If it is a wall cell, decrement 1 plus 2
+                else:
+                    total_walls -= 3
+            # If it is any cell, just decrement 1
+            else:
+                total_walls -= 1
+
+        return total_cost
+    
+    def get_corners(self, width, height):
+        """Method to get the corners of the board
+
+        Args:
+            width (int): Width of the board
+            height (int): Height of the board
 
         Returns:
-            int: The "score" of the state
+            list: List with the corners
         """
-        enemy_label = state.next_player.label
-        max_possible_score = state.game.width*state.game.height
-        board = state.board
-
-        for cell in board:
-            if board[cell] != enemy_label:
-                max_possible_score -= 1
-
-        return max_possible_score
+        corners = [(1, 1), (1, height), (width, 1), (width, height)]
+        return corners
 
 
 class WeightedBoardKJ(StudentHeuristic):
-    def __init__(self, name, evaluation_function):
-        super().__init__(name, evaluation_function)
+    def __init__(self):
 
         # Attribute to check if the data is set
         self.info_set = False
@@ -56,7 +89,7 @@ class WeightedBoardKJ(StudentHeuristic):
     def get_name(self) -> str:
         return "mysolution1"
 
-    def evaluate(self, state: TwoPlayerGameState) -> float:
+    def evaluation_function(self, state: TwoPlayerGameState) -> float:
         if self.info_set is False:
             self.set_info(state.game.width, state.game.height, state)
 
@@ -139,15 +172,13 @@ class WeightedBoardKJ(StudentHeuristic):
         """
         cell_value = 0
         for cell in board:
-            # Checking who occupied the cell.
-            if cell in board:
 
-                # Storing each cell value
-                cell_value = self.get_cell_value(cell, board)
+            # Storing each cell value
+            cell_value = self.get_cell_value(cell, board)
 
-                # Each cell in the board is stored with:
-                # (Player on that cell, value of the cell)
-                self.previous_board_cells[cell] = (board[cell], cell_value)
+            # Each cell in the board is stored with:
+            # (Player on that cell, value of the cell)
+            self.previous_board_cells[cell] = (board[cell], cell_value)
 
     def get_cell_value(self, cell, board):
         """Method to get the cell value
@@ -318,3 +349,36 @@ class WeightedBoardKJ(StudentHeuristic):
         powerful_cells.append((width, height-2))
 
         return powerful_cells
+
+class MaxCellsKJ(StudentHeuristic):
+    def get_name(self) -> str:
+        return "MaxCellsKJ"
+
+    def evaluation_function(self, state: TwoPlayerGameState) -> float:
+        return self.possible_score(state)
+
+    def possible_score(self, state: TwoPlayerGameState) -> int:
+        """Method to get the "score" in the state. The more cells
+        we have, the better.
+
+        possible_score = max_score - #·cells occupied by us
+
+        The smaller the number, the better.
+
+        Args:
+            state (TwoPlayerGameState): State of the actual game
+
+        Returns:
+            int: The "score" of the state
+        """
+        enemy_label = state.next_player.label
+        width = state.game.width
+        height = state.game.height
+        max_possible_score = width*height
+        board = state.board
+
+        for cell in board:
+            if board[cell] != enemy_label:
+                max_possible_score -= 1
+
+        return max_possible_score
