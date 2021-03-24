@@ -91,7 +91,7 @@ class WeightedBoardKJ(StudentHeuristic):
         self.previous_board_cells = {}
 
     def get_name(self) -> str:
-        return "mysolution1"
+        return "WeightedBoardKJ"
 
     def evaluation_function(self, state: TwoPlayerGameState) -> float:
         if self.info_set is False:
