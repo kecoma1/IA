@@ -6,12 +6,13 @@ from tournament import (
     StudentHeuristic,
 )
 
-class SimpleKJ (StudentHeuristic):
+
+class SimpleKJ(StudentHeuristic):
     def __init__(self):
         # Attribute to check if the data is set
         self.info_set = False
 
-    def get_name (self) -> str:
+    def get_name(self) -> str:
         return "SimpleKJ"
 
     def evaluation_function(self, state: TwoPlayerGameState) -> float:
@@ -34,22 +35,25 @@ class SimpleKJ (StudentHeuristic):
         self.corners = self.get_corners(self.width,
                                         self.height)
 
-    def num_walls_left (self, state: TwoPlayerGameState) -> int:
+    def num_walls_left(self, state: TwoPlayerGameState) -> int:
         height = state.game.height
         width = state.game.width
         total_walls = (height*2 + width*2) - 4
-        total_corners = 4 
-        total_cost = (total_walls * 2) + (total_corners * 10) + (height * width)
+        total_corners = 4
+        total_cost = (total_walls * 2)\
+            + (total_corners * 10)\
+            + (height * width)
 
-        # For each cell in the game, if it is 
+        # For each cell in the game, if it is
         # occupied we decrement the value depending
-        # on its worth: 
+        # on its worth:
         # -Any cell: 1
         # -Wall cell: +2
         # -Corner cell: +10
         for occupied in state.board:
             if height in occupied or 1 in occupied:
-                # If it is a corner, decrement 1 plus 10 (corners more important)
+                # If it is a corner, decrement 1 plus 10
+                # (corners more important)
                 if occupied in self.corners:
                     total_cost -= 11
                 # If it is a wall cell, decrement 1 plus 2
@@ -60,7 +64,7 @@ class SimpleKJ (StudentHeuristic):
                 total_walls -= 1
 
         return total_cost
-    
+
     def get_corners(self, width, height):
         """Method to get the corners of the board
 
@@ -349,6 +353,7 @@ class WeightedBoardKJ(StudentHeuristic):
         powerful_cells.append((width, height-2))
 
         return powerful_cells
+
 
 class MaxCellsKJ(StudentHeuristic):
     def get_name(self) -> str:
