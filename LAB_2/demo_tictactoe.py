@@ -46,6 +46,16 @@ player_minimax3_2 = Player(
     delay=0,
 )
 
+player_alphabeta = Player(
+    name='IA 3 (alphabeta, 1)',
+    strategy=MinimaxAlphaBetaStrategy(
+        heuristic=heuristic2,
+        max_depth_minimax=3,
+        verbose=1,
+    ),
+    delay=0,
+)
+
 player_random = Player(
     name='IA (minimax, 3)',
     strategy=RandomStrategy(),
@@ -60,7 +70,7 @@ dim_board = 3
 # Manual vs minimax player
 # player_a, player_b = player_manual, player_minimax3
 
-player_a, player_b = player_minimax3_1, player_minimax3_2
+player_a, player_b = player_minimax3_2, player_alphabeta
 
 # Initialize a tic-tac-toe game.
 game = TicTacToe(
