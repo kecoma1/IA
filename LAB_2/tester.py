@@ -3,6 +3,7 @@ minimax and alpha beta pruning.
 """
 from game import Player, TwoPlayerGameState, TwoPlayerMatch
 from tictactoe import TicTacToe
+from reversi import Reversi
 from heuristic import heuristic
 from strategy import (
     MinimaxAlphaBetaStrategy,
@@ -12,6 +13,7 @@ from strategy import (
 import timeit
 import numpy as np
 import matplotlib.pyplot as plt
+
 
 class Heuristic1():
     """Dummy heuristic for testing"""
@@ -26,8 +28,47 @@ class Heuristic1():
         return n + 4
 
 
-# Instantiating the heuristic object
-heuristic = Heuristic1()
+def test_and_plot(game_state, depth_limit):
+    # Instantiating the heuristic object
+    heuristic = Heuristic1()
+
+    # Lists to store the spent times
+    times = []
+    performance_comparison = []
+    names = ['Minimax', 'Alpha Beta Pruning']
+
+    for i in range(1, depth_limit+1):
+        # Strategies to be tested.
+        minimax_test = MinimaxStrategy(heuristic, i, 0)
+        alphabeta_test = MinimaxAlphaBetaStrategy(heuristic, i, 0)
+
+        # Testing Minimax
+        minimax_time = timeit.timeit(lambda: minimax_test.next_move(game_state, False), number=10)
+        times.append(minimax_time)
+        print('Minimax test. Depth: '+str(i)+', time spent: '+str(minimax_time))
+
+        # Testing AlphaBeta
+        alphabeta_time = timeit.timeit(lambda: alphabeta_test.next_move(game_state, False), number=10)
+        times.append(alphabeta_time)
+        print('Alpha beta pruning. Depth: '+str(i)+', time spent: '+str(alphabeta_time))
+
+        performance = minimax_time/alphabeta_time
+        print('Alpha beta pruning is '+str(performance)+' times faster at depth '+str(i)+'\n')
+        performance_comparison.append(performance)
+
+        # Plotting the data
+        plt.bar(names, times)
+        plt.ylabel('Time spent')
+        plt.show()
+
+        # Resetting resources
+        plt.clf()
+        times.clear()
+
+    # Plotting the performance during the previous tests
+    plt.plot(performance_comparison)
+    plt.ylabel('Alpha beta performance over minimax')
+    plt.show()
 
 # Creating the game state
 
@@ -46,7 +87,7 @@ player2 = Player(
 )
 
 # Initialize a tic-tac-toe game.
-game = TicTacToe(
+game1 = TicTacToe(
     player1=player1,
     player2=player2,
     dim_board=3,
@@ -55,48 +96,12 @@ game = TicTacToe(
 initial_board = np.zeros((3, 3))
 initial_player = player1
 
-# Initialize a game state.
+# Initialize a game state of tic tac toe.
 game_state = TwoPlayerGameState(
-    game=game,
+    game=game1,
     board=initial_board,
     initial_player=initial_player,
 )
 
-# Lists to store the spent times
-times = []
-performance_comparison = []
-names = ['Minimax', 'Alpha Beta Pruning']
-
-for i in range(1, 5):
-    # Strategies to be tested.
-    minimax_test = MinimaxStrategy(heuristic, i, 0)
-    alphabeta_test = MinimaxAlphaBetaStrategy(heuristic, i, 0)
-
-    # Testing Minimax
-    minimax_time = timeit.timeit(lambda: minimax_test.next_move(game_state, False), number=10)
-    times.append(minimax_time)
-    print('Minimax test. Depth: '+str(i)+', time spent: '+str(minimax_time))
-
-    # Testing AlphaBeta
-    alphabeta_time = timeit.timeit(lambda: alphabeta_test.next_move(game_state, False), number=10)
-    times.append(alphabeta_time)
-    print('Alpha beta pruning. Depth: '+str(i)+', time spent: '+str(alphabeta_time))
-
-    performance = minimax_time/alphabeta_time
-    print('Alpha beta pruning is '+str(performance)+' times faster at depth '+str(i)+'\n')
-    performance_comparison.append(performance)
-
-    # Plotting the data
-    plt.bar(names, times)
-    plt.ylabel('Time spent')
-    plt.show()
-
-    # Resetting resources
-    plt.clf()
-    times.clear()
-
-# Plotting the performance during the previous tests
-plt.plot(performance_comparison)
-plt.ylabel('Alpha beta performance over minimax')
-plt.show()
-
+# Testing tic tac toe
+test_and_plot(game_state, 9)
