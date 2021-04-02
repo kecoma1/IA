@@ -10,12 +10,12 @@ from __future__ import annotations  # For Python 3.7
 
 from abc import ABC, abstractmethod
 from typing import List
-import timeit
 
 import numpy as np
 
 from game import TwoPlayerGame, TwoPlayerGameState
 from heuristic import Heuristic
+import timeit
 
 
 class Strategy(ABC):
@@ -111,16 +111,10 @@ class MinimaxStrategy(Strategy):
             if self.verbose > 1:
                 print('{}: {}'.format(state.board, minimax_value))
 
-            a = timeit.default_timer()
-
             successor_minimax_value = self._min_value(
                 successor,
                 self.max_depth_minimax,
             )
-
-            b = timeit.default_timer()
-
-            print('Minimax', b-a)
 
             if (successor_minimax_value > minimax_value):
                 minimax_value = successor_minimax_value
@@ -211,6 +205,7 @@ class MinimaxAlphaBetaStrategy(Strategy):
         gui: bool = False,
     ) -> TwoPlayerGameState:
         """Compute next state in the game."""
+
         successors = self.generate_successors(state)
 
         alpha = -np.inf
@@ -220,18 +215,12 @@ class MinimaxAlphaBetaStrategy(Strategy):
             if self.verbose > 1:
                 print('{}: {}'.format(state.board, alpha))
 
-            a = timeit.default_timer()
-
             successor_alpha_beta_value = self._min_value(
                 successor,
                 alpha,
                 beta,
                 self.max_depth_minimax,
             )
-
-            b = timeit.default_timer()
-
-            print('AlphaBetaPruning', b-a)
 
             if (successor_alpha_beta_value > alpha):
                 alpha = successor_alpha_beta_value

@@ -11,8 +11,6 @@ from __future__ import annotations  # For Python 3.7
 
 from game import Player, TwoPlayerGameState, TwoPlayerMatch
 from heuristic import heuristic
-from tournament import StudentHeuristic
-
 from reversi import (
     Reversi,
     from_array_to_dictionary_board,
@@ -23,12 +21,6 @@ from strategy import (
     MinimaxAlphaBetaStrategy,
     MinimaxStrategy,
     RandomStrategy,
-)
-
-from student_heuristic import (
-    SimpleKJ,
-    MaxCellsKJ,
-    WeightedBoardKJ,
 )
 
 player_manual = Player(
@@ -56,7 +48,7 @@ player_minimax3 = Player(
     name='Minimax_3',
     strategy=MinimaxStrategy(
         heuristic=heuristic,
-        max_depth_minimax=3,
+        max_depth_minimax=4,
         verbose=1,
     ),
 )
@@ -65,36 +57,27 @@ player_minimax4 = Player(
     name='Minimax_4',
     strategy=MinimaxStrategy(
         heuristic=heuristic,
-        max_depth_minimax=2,
+        max_depth_minimax=4,
         verbose=0,
     ),
 )
 
-player_alphabeta = Player(
-    name='MaxCells',
+player_alphabeta1 = Player(
+    name='AlphaBeta_1',
     strategy=MinimaxAlphaBetaStrategy(
-        heuristic=MaxCellsKJ("Maximizing cells", None),
-        max_depth_minimax=2,
-        verbose=0,
-    ),
+        heuristic=heuristic,
+        max_depth_minimax=4,
+        verbose=0
+    )
 )
 
 player_alphabeta2 = Player(
-    name='Weighted Board Player',
+    name='AlphaBeta_2',
     strategy=MinimaxAlphaBetaStrategy(
-        heuristic=WeightedBoardKJ("Weighted board", None),
+        heuristic=heuristic,
         max_depth_minimax=4,
-        verbose=0,
-    ),
-)
-
-player_alphabeta3 = Player(
-    name='AlphaBeta',
-    strategy=MinimaxAlphaBetaStrategy(
-        heuristic=SimpleKJ("Simple", None),
-        max_depth_minimax=4,
-        verbose=0,
-    ),
+        verbose=0
+    )
 )
 
 
@@ -106,8 +89,7 @@ player_alphabeta3 = Player(
 
 
 # minimax vs minimax player
-player_a, player_b = player_alphabeta3, player_alphabeta
-
+player_a, player_b = player_alphabeta1, player_alphabeta2
 
 """
 Here you can initialize the player that moves first
@@ -117,8 +99,7 @@ E.g., it can be an intermediate state.
 initial_player = player_a  # Player who moves first.
 
 # Board at an intermediate state of the game.
-initial_board = None
-(
+initial_board = (
     ['..B.B..',
      '.WBBW..',
      'WBWBB..',
@@ -160,10 +141,15 @@ game_state = TwoPlayerGameState(
 # Initialize a match.
 match = TwoPlayerMatch(
     game_state,
-    max_sec_per_move=60,
+    max_sec_per_move=1000,
     gui=True,
 )
 
+f = open("matches_time_alphaBeta.log", "w")
+
 # Play match
 scores = match.play_match()
+
+f.close()
+
 input('Press any key to finish.')

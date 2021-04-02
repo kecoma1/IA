@@ -10,7 +10,7 @@
             "request": "launch",
             //"args": ["-l", "tinyCorners", "-p", "SearchAgent", "-a", "fn=bfs,prob=CornersProblem"],
             //"program": "pacman.py",
-            "program": "demo_tictactoe.py",
+            "program": "tester.py",
             "console": "integratedTerminal"
         }
     ]
