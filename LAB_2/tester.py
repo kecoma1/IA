@@ -14,6 +14,7 @@ import timeit
 import numpy as np
 import matplotlib.pyplot as plt
 
+TIMES_TO_TEST = 10
 
 class Heuristic1():
     """Dummy heuristic for testing"""
@@ -37,18 +38,23 @@ def test_and_plot(game_state, depth_limit):
     performance_comparison = []
     names = ['Minimax', 'Alpha Beta Pruning']
 
+    # X axis for the plot
+    x_axis = []
+
     for i in range(1, depth_limit+1):
+        x_axis.append(i)
+
         # Strategies to be tested.
         minimax_test = MinimaxStrategy(heuristic, i, 0)
         alphabeta_test = MinimaxAlphaBetaStrategy(heuristic, i, 0)
 
         # Testing Minimax
-        minimax_time = timeit.timeit(lambda: minimax_test.next_move(game_state, False), number=10)
+        minimax_time = timeit.timeit(lambda: minimax_test.next_move(game_state, False), number=TIMES_TO_TEST)/TIMES_TO_TEST
         times.append(minimax_time)
         print('Minimax test. Depth: '+str(i)+', time spent: '+str(minimax_time))
 
         # Testing AlphaBeta
-        alphabeta_time = timeit.timeit(lambda: alphabeta_test.next_move(game_state, False), number=10)
+        alphabeta_time = timeit.timeit(lambda: alphabeta_test.next_move(game_state, False), number=TIMES_TO_TEST)/TIMES_TO_TEST
         times.append(alphabeta_time)
         print('Alpha beta pruning. Depth: '+str(i)+', time spent: '+str(alphabeta_time))
 
@@ -58,7 +64,7 @@ def test_and_plot(game_state, depth_limit):
 
         # Plotting the data
         plt.bar(names, times)
-        plt.ylabel('Time spent')
+        plt.ylabel('Time spent (seconds)')
         plt.show()
 
         # Resetting resources
@@ -66,8 +72,9 @@ def test_and_plot(game_state, depth_limit):
         times.clear()
 
     # Plotting the performance during the previous tests
-    plt.plot(performance_comparison)
-    plt.ylabel('Alpha beta performance over minimax')
+    plt.plot(x_axis, performance_comparison)
+    plt.ylabel('Minimax performance over Alpha beta')
+    plt.xlabel('Depth')
     plt.show()
 
 # Creating the game state
@@ -104,4 +111,4 @@ game_state = TwoPlayerGameState(
 )
 
 # Testing tic tac toe
-test_and_plot(game_state, 9)
+test_and_plot(game_state, 4)
