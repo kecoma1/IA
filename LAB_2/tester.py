@@ -1,4 +1,4 @@
-"""File to test the different strategies, 
+"""File to test the different strategies,
 minimax and alpha beta pruning.
 """
 from game import Player, TwoPlayerGameState, TwoPlayerMatch
@@ -15,6 +15,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 TIMES_TO_TEST = 10
+
 
 class Heuristic1():
     """Dummy heuristic for testing"""
@@ -49,17 +50,22 @@ def test_and_plot(game_state, depth_limit):
         alphabeta_test = MinimaxAlphaBetaStrategy(heuristic, i, 0)
 
         # Testing Minimax
-        minimax_time = timeit.timeit(lambda: minimax_test.next_move(game_state, False), number=TIMES_TO_TEST)/TIMES_TO_TEST
+        minimax_time = timeit.timeit(lambda: minimax_test.next_move(
+            game_state, False), number=TIMES_TO_TEST)/TIMES_TO_TEST
         times.append(minimax_time)
-        print('Minimax test. Depth: '+str(i)+', time spent: '+str(minimax_time))
+        print('Minimax test. Depth: '+str(i)+', time spent: '+str(
+            minimax_time))
 
         # Testing AlphaBeta
-        alphabeta_time = timeit.timeit(lambda: alphabeta_test.next_move(game_state, False), number=TIMES_TO_TEST)/TIMES_TO_TEST
+        alphabeta_time = timeit.timeit(lambda: alphabeta_test.next_move(
+            game_state, False), number=TIMES_TO_TEST)/TIMES_TO_TEST
         times.append(alphabeta_time)
-        print('Alpha beta pruning. Depth: '+str(i)+', time spent: '+str(alphabeta_time))
+        print('Alpha beta pruning. Depth: '+str(i)+', time spent: '+str(
+            alphabeta_time))
 
         performance = minimax_time/alphabeta_time
-        print('Alpha beta pruning is '+str(performance)+' times faster at depth '+str(i)+'\n')
+        print('Alpha beta pruning is '+str(
+            performance)+' times faster at depth '+str(i)+'\n')
         performance_comparison.append(performance)
 
         # Plotting the data
@@ -76,6 +82,7 @@ def test_and_plot(game_state, depth_limit):
     plt.ylabel('Minimax performance over Alpha beta')
     plt.xlabel('Depth')
     plt.show()
+
 
 # Creating the game state
 
