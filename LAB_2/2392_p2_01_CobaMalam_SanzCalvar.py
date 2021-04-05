@@ -36,6 +36,18 @@ class SimpleKJ(StudentHeuristic):
                                         self.height)
 
     def num_walls_left(self, state: TwoPlayerGameState) -> int:
+        """Evaluation function. For each cell in the game, if it is
+        occupied we decrement the value depending on its worth:
+         -Any cell: 1
+         -Wall cell: +2
+         -Corner cell: +10
+
+        Args:
+            state (TwoPlayerGameState): State of the game
+
+        Returns:
+            int: total cost
+        """
         height = state.game.height
         width = state.game.width
         total_walls = (height*2 + width*2) - 4
@@ -44,12 +56,6 @@ class SimpleKJ(StudentHeuristic):
             + (total_corners * 10)\
             + (height * width)
 
-        # For each cell in the game, if it is
-        # occupied we decrement the value depending
-        # on its worth:
-        # -Any cell: 1
-        # -Wall cell: +2
-        # -Corner cell: +10
         for occupied in state.board:
             if height in occupied or 1 in occupied:
                 # If it is a corner, decrement 1 plus 10
