@@ -1,5 +1,8 @@
 """File to test the different strategies,
 minimax and alpha beta pruning.
+Created by Kevin de la Coba Malam
+Juan Luis Sanz. Group 2392, pair 01    
+
 """
 from game import Player, TwoPlayerGameState, TwoPlayerMatch
 from tictactoe import TicTacToe
