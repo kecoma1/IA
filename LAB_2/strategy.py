@@ -5,8 +5,10 @@
         Alejandro Bellogin <alejandro.bellogin@uam.es>
         Alberto Suárez <alberto.suarez@uam.es>
 
-Edited by Kevin de la Coba Malam and Juan Luis Sanz.
-Group 2392, pair 01    
+Edited by:
+    Kevin de la Coba Malam.
+    Juan Luis Sanz Calvar.
+    Group 2392, pair 01.
 """
 
 from __future__ import annotations  # For Python 3.7

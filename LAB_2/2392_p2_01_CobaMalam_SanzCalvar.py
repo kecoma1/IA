@@ -1,8 +1,9 @@
-    """[summary]
-
-    Returns:
-        [type]: [description]
-    """
+"""
+Created by:
+    Kevin de la Coba Malam.
+    Juan Luis Sanz Calvar.
+    Group 2392, pair 01.
+"""
 from game import (
     TwoPlayerGameState,
 )
