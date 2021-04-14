@@ -1,0 +1,4 @@
+espacio_lineal(Menor, Mayor, Numero_elementos, Rejilla) :- get_step(Menor, Mayor, Numero_elementos, X), add_list(Menor, 0, Numero_elementos, Rejilla, X).
+
+get_step(S, B, N, X) :- X is (B-S)/N.
+add_list(S, I, N, L, X):- Z is I+1, L append(S+) add_list(S, I, N, L).
