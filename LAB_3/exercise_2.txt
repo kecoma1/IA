@@ -1,0 +1,8 @@
+segundo_penultimo([A | Bs], X, Y) :- segundo(Bs, X), penultimo([A | Bs], Y).
+
+segundo([], _) :- write("ERROR 2.1 Longitud.\n"), fail.
+segundo([C | _], X) :- X is C.
+
+penultimo([A, _], Y) :- Y is A.
+penultimo([_ | Bs], Y) :- penultimo(Bs, Y).
+penultimo([], _).
