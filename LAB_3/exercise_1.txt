@@ -1,0 +1,8 @@
+%Assert
+potencia(_,C,_) :- C < 0, write("Error: potencia negativa\n"), !, fail.
+
+potencia(N,0,1) :- N =\= 0. % Si la base N no es 0 y se eleva a 0 el resultado es 1 (caso base)
+potencia(N,M,S) :- Q is M - 1, potencia(N,Q,L), S is L*N.
+
+sum_pot_prod([J], [K], P, I) :- potencia(J*K, P, U), I is U. % Caso base
+sum_pot_prod([X|Y], [A|B], P, R) :- sum_pot_prod(Y, B, P, Z), potencia(X*A, P, T), F is T, R is Z+F.
