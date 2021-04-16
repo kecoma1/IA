@@ -1,4 +1,26 @@
-espacio_lineal(Menor, Mayor, Numero_elementos, Rejilla) :- get_step(Menor, Mayor, Numero_elementos, X), add_list(Menor, 0, Numero_elementos, Rejilla, X).
+/***************
+* EJERCICIO 4. espacio_lineal/4
+*
+*       ENTRADA:
+*               Menor: Numero de valor entero, valor inferior del intervalo.
+*               Mayor: Numero de valor entero, valor superior del intervalo.
+*               Numero_elementos: Numero de valor entero, numero de valores de la rejilla.
+*       SALIDA:
+*               Rejilla: Vector de numeros de valor real resultante con la rejilla.
+*
+****************/
+espacio_lineal(Menor, Mayor, Num_elem, Rejilla) :- 
+    get_step(Menor, Mayor, Num_elem, Step), 
+    build_lista(Num_elem, Mayor, Step, Rejilla).
 
-get_step(S, B, N, X) :- X is (B-S)/N.
-add_list(S, I, N, L, X):- Z is I+1, L append(S+) add_list(S, I, N, L).
+get_step(Menor, Mayor, Num_elem, Step) :- Step is (Mayor-Menor)/Num_elem.
+
+build_lista(I, I, _, Rejilla, L) :- Rejilla = L.
+build_lista(I, Num_elem, Step, Rejilla, [X | Xs]):-
+    I2 is I+1,
+    Next is X-Step,
+    build_lista(I2, Num_elem, Step, Rejilla, [Next, X | Xs]).
+build_lista(Num_elem, Mayor, Step, Rejilla) :- 
+    I is 1,
+    Next is Mayor-Step, 
+    build_lista(I, Num_elem, Step, Rejilla, [Next , Mayor]).
