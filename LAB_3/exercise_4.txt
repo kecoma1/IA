@@ -10,22 +10,28 @@
 *
 ****************/
 espacio_lineal(Menor, Mayor, Num_elem, Rejilla) :- 
-    %check_index(Menor, Mayor),
+    check_index(Menor, Mayor),
     get_step(Menor, Mayor, Num_elem, Step), 
     End is Num_elem-1,
     build_lista(End, Menor, Mayor, Step, Rejilla).
 
-%check_index(Menor, Mayor) :- Menor < Mayor, !, write("ERROR 2.1 Longitud.\n"), fail.
+% Error handling.
+check_index(Menor, Mayor) :- Menor < Mayor, !.
+check_index(Mayor, Menor) :- Mayor > Menor, write("ERROR 2.1 Longitud.\n"), fail. 
 
+% Calculating the value to sum in each iteration
 get_step(Menor, Mayor, Num_elem, Step) :- Step is ((Mayor)-Menor)/(Num_elem-1).
 
+% Building the list of values
+% If we added N-1 elements we add the first one at the beginning.
 build_lista(I, I, Menor, _, Rejilla, [_ | Xs]) :- Rejilla = [Menor | Xs].
+% Recursive function to add values into the list.
 build_lista(I, Num_elem, Menor, Step, Rejilla, [X | Xs]):-
     I2 is I+1,
     Next is X-Step,
     build_lista(I2, Num_elem, Menor, Step, Rejilla, [Next, X | Xs]).
+% First call without recursion for building the list.
 build_lista(Num_elem, Menor, Mayor, Step, Rejilla) :- 
     I is 1,
     Next is Mayor-Step, 
     build_lista(I, Num_elem, Menor, Step, Rejilla, [Next , Mayor]).
-
