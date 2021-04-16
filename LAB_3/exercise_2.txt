@@ -1,8 +1,22 @@
+/***************
+* EJERCICIO 2. segundo_penultimo/3
+*
+*       ENTRADA:
+*               L: Lista de entrada de numeros de valor real.
+*       SALIDA:
+*               X : Numero de valor real. Segundo elemento.
+*		Y : Numero de valor real. Penultimo elemento.
+*
+****************/
 segundo_penultimo([A | Bs], X, Y) :- segundo(Bs, X), penultimo([A | Bs], Y).
 
+% Error handling
 segundo([], _) :- write("ERROR 2.1 Longitud.\n"), fail.
+
+% Getting the second element
 segundo([C | _], X) :- X is C.
 
+% Getting the penultimate element
 penultimo([A, _], Y) :- Y is A.
+% Recursive call
 penultimo([_ | Bs], Y) :- penultimo(Bs, Y).
-penultimo([], _).
