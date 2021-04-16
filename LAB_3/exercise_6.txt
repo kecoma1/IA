@@ -1,0 +1,28 @@
+/***************
+* EJERCICIO 6. divergencia_kl/3
+*
+*       ENTRADA:
+*		D1: Vector de numeros de valor real. Distribucion.
+*		D2: Vector de numeros de valor real. Distribucion.
+*       SALIDA:
+*		KL: Numero de valor real. Divergencia KL.
+*
+****************/
+divergencia_kl(D1, D2, KL) :- sumatory(D1, D2, KL).
+
+sumatory([], [], KL, Result) :- KL is Result.
+sumatory([Xi | Xs], [Yi | Ys], KL, Previous_result) :-
+    Division is Xi/Yi, 
+    Logarithm = log(Division), 
+    Multiplication is Logarithm*Xi, 
+    Sumation is Previous_result+Multiplication,
+    sumatory(Xs, Ys, KL, Sumation).
+sumatory([Xi | Xs], [Yi | Ys], KL) :- 
+    Division is Xi/Yi, 
+    Logarithm = log(Division), 
+    Multiplication is Logarithm*Xi, 
+    sumatory(Xs, Ys, KL, Multiplication).
+
+% Error handling
+sumatory([0.0 | _], [_ | _], _) :-  write("ERROR 6.1. Divergencia KL no definida.\n"), fail.
+sumatory([_ | _], [0.0 | _], _) :-  write("ERROR 6.1. Divergencia KL no definida.\n"), fail.
