@@ -10,17 +10,22 @@
 *
 ****************/
 espacio_lineal(Menor, Mayor, Num_elem, Rejilla) :- 
+    %check_index(Menor, Mayor),
     get_step(Menor, Mayor, Num_elem, Step), 
-    build_lista(Num_elem, Mayor, Step, Rejilla).
+    End is Num_elem-1,
+    build_lista(End, Menor, Mayor, Step, Rejilla).
 
-get_step(Menor, Mayor, Num_elem, Step) :- Step is (Mayor-Menor)/Num_elem.
+%check_index(Menor, Mayor) :- Menor < Mayor, !, write("ERROR 2.1 Longitud.\n"), fail.
 
-build_lista(I, I, _, Rejilla, L) :- Rejilla = L.
-build_lista(I, Num_elem, Step, Rejilla, [X | Xs]):-
+get_step(Menor, Mayor, Num_elem, Step) :- Step is ((Mayor)-Menor)/(Num_elem-1).
+
+build_lista(I, I, Menor, _, Rejilla, [_ | Xs]) :- Rejilla = [Menor | Xs].
+build_lista(I, Num_elem, Menor, Step, Rejilla, [X | Xs]):-
     I2 is I+1,
     Next is X-Step,
-    build_lista(I2, Num_elem, Step, Rejilla, [Next, X | Xs]).
-build_lista(Num_elem, Mayor, Step, Rejilla) :- 
+    build_lista(I2, Num_elem, Menor, Step, Rejilla, [Next, X | Xs]).
+build_lista(Num_elem, Menor, Mayor, Step, Rejilla) :- 
     I is 1,
     Next is Mayor-Step, 
-    build_lista(I, Num_elem, Step, Rejilla, [Next , Mayor]).
+    build_lista(I, Num_elem, Menor, Step, Rejilla, [Next , Mayor]).
+
