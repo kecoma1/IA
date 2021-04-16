@@ -10,19 +10,34 @@
 ****************/
 divergencia_kl(D1, D2, KL) :- sumatory(D1, D2, KL).
 
-sumatory([], [], KL, Result) :- KL is Result.
-sumatory([Xi | Xs], [Yi | Ys], KL, Previous_result) :-
+% Error handling
+sumatory([0.0 | _], [_ | _], _, _, _, _) :-  write("ERROR 6.1. Divergencia KL no definida.\n"), fail.
+sumatory([_ | _], [0.0 | _], _, _, _, _) :-  write("ERROR 6.1. Divergencia KL no definida.\n"), fail.
+% End of the sumation
+sumatory([], [], KL, Result, 1.0, 1.0) :- KL is Result.
+%Error handling
+sumatory([], [], _, _, _, _) :-  write("ERROR 6.2. Divergencia KL definida solo para distribuciones.\n"), fail.
+sumatory([], [], _, _, _, _) :-  write("ERROR 6.2. Divergencia KL definida solo para distribuciones.\n"), fail.
+
+% Recursive function
+sumatory([Xi | Xs], [Yi | Ys], KL, Previous_result, X_sumation, Y_sumation) :-
+    X_sumation2 is X_sumation+Xi,
+    Y_sumation2 is Y_sumation+Yi,
     Division is Xi/Yi, 
     Logarithm = log(Division), 
     Multiplication is Logarithm*Xi, 
     Sumation is Previous_result+Multiplication,
-    sumatory(Xs, Ys, KL, Sumation).
-sumatory([Xi | Xs], [Yi | Ys], KL) :- 
-    Division is Xi/Yi, 
-    Logarithm = log(Division), 
-    Multiplication is Logarithm*Xi, 
-    sumatory(Xs, Ys, KL, Multiplication).
+    sumatory(Xs, Ys, KL, Sumation, X_sumation2, Y_sumation2).
 
 % Error handling
 sumatory([0.0 | _], [_ | _], _) :-  write("ERROR 6.1. Divergencia KL no definida.\n"), fail.
 sumatory([_ | _], [0.0 | _], _) :-  write("ERROR 6.1. Divergencia KL no definida.\n"), fail.
+% Initial function
+sumatory([Xi | Xs], [Yi | Ys], KL) :- 
+    X_sumation is Xi,
+    Y_sumation is Yi,
+    Division is Xi/Yi, 
+    Logarithm = log(Division), 
+    Multiplication is Logarithm*Xi, 
+    sumatory(Xs, Ys, KL, Multiplication, X_sumation, Y_sumation).
+
