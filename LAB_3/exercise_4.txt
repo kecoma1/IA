@@ -16,8 +16,8 @@ espacio_lineal(Menor, Mayor, Num_elem, Rejilla) :-
     build_lista(End, Menor, Mayor, Step, Rejilla).
 
 % Error handling.
-check_index(Menor, Mayor) :- Menor < Mayor, !.
-check_index(Mayor, Menor) :- Mayor > Menor, write("ERROR 2.1 Longitud.\n"), fail. 
+check_index(Menor, Mayor) :- Menor < Mayor.
+check_index(Mayor, Menor) :- Mayor > Menor, write("ERROR 2.1 Longitud.\n"), !, fail. 
 
 % Calculating the value to sum in each iteration
 get_step(Menor, Mayor, Num_elem, Step) :- Step is ((Mayor)-Menor)/(Num_elem-1).
