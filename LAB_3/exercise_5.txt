@@ -1,0 +1,19 @@
+/***************
+* EJERCICIO 5. normalizar/2, normalizar(Distribucion_sin_normalizar, Distribucion)
+*
+*       ENTRADA:
+*               Distribucion_sin_normalizar: Lista de números de distribucion sin normalizar.
+*       SALIDA:
+*               Distribucion: Distribución normalizada.
+*
+****************/
+%Assert
+sumar([X|_],_,_) :- X < 0, write("Error: All numbers must be positive\n"), !, fail.
+
+sumar([], R, L) :- R is 0, L is 0.
+sumar([X|Y],R, T) :- sumar(Y, S, M), R is S + X, T is M + 1.
+
+dividir([E|_], Z, Q, R, S) :- Z=:=1, H is float(E)/float(Q), append(R, [H], S).
+dividir([G|H], Z, Q, R, S) :- Y is float(G)/float(Q), append(R, [Y], L), dividir(H, Z-1, Q, L, S).
+
+normalizar(X,Z) :- sumar(X,Y,L), dividir(X, L, Y, _, Z).
